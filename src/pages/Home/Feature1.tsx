@@ -1,7 +1,5 @@
 import { Badge, Col, Container, Row } from 'react-bootstrap';
 import FeatherIcon from 'feather-icons-react';
-
-import desktop from 'assets/images/hero/desktop.jpg';
 import taildb from 'assets/images/hero/taildb2.png';
 import api from 'assets/images/hero/api.png';
 

@@ -2,7 +2,7 @@ import { Button, ButtonGroup, Col, Container, Dropdown, Row } from 'react-bootst
 import FeatherIcon from 'feather-icons-react';
 
 // images
-import desktop from 'assets/images/hero/desktop.jpg';
+import desktop from 'assets/images/hero/taildb.png';
 
 const Hero8 = () => {
     return (
