@@ -5,14 +5,23 @@ import FeatherIcon from 'feather-icons-react';
 import config from '../../config';
 import { Link } from 'react-router-dom';
 
-export type SearchIndex = Record<string, string[]>;
+interface TailDetails {
+    name: string;
+    code: string;
+    nft_uri: string;
+}
+
+export type SearchIndex = {
+    search_index: Record<string, string[]>;
+    hashes: Record<string, TailDetails>;
+}
 
 type SearchIndexProps = {
     searchIndex: SearchIndex;
 }
 
 const Search = ({ searchIndex }: SearchIndexProps) => {
-    const [results, setResults] = useState<string[]>([]);
+    const [results, setResults] = useState<(TailDetails & { hash: string; })[]>([]);
     const search = (event: React.ChangeEvent<HTMLInputElement>) => {
         const searchTerms = event.target.value.toLowerCase();
 
@@ -21,9 +30,13 @@ const Search = ({ searchIndex }: SearchIndexProps) => {
                 .split(' ')
                 .reduce<string[]>(
                     (accum, searchTerm) =>
-                        [...new Set([...accum, ...searchIndex[searchTerm]])],
+                        [...new Set([...accum, ...searchIndex.search_index[searchTerm]])],
                         []
                 )
+                .map(hash => ({
+                    hash,
+                    ...searchIndex.hashes[hash]
+                }))
         );
     };
 
@@ -57,9 +70,9 @@ const Search = ({ searchIndex }: SearchIndexProps) => {
                         {results.length > 0 && (
                             <div className="mt-5">
                                 <h3>Search results</h3>
-                                <ul>
+                                <ul className="list-inline mt-3 mb-4 mb-lg-0">
                                     {results.map(result => (
-                                        <li><Link to={`/tail/${result}`}>{result}</Link></li>
+                                        <li className="list-inline-item me-4 mb-2" key={result.hash}><Link to={`/tail/${result.hash}`}>{result.name} ({result.code})</Link></li>
                                     ))}
                                 </ul>
                             </div>

@@ -10,7 +10,10 @@ import config from '../../config';
 
 const Explore = () => {
     const [tails, setTails] = useState([]);
-    const [searchIndex, setSearchIndex] = useState<SearchIndex>({});
+    const [searchIndex, setSearchIndex] = useState<SearchIndex>({
+        search_index: {},
+        hashes: {},
+    });
 
     useEffect(() => {
         axios.get(config.GET_TAILS_URL)
