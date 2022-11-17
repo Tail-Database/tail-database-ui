@@ -5,6 +5,7 @@ import Root from './Root';
 
 const Home = React.lazy(() => import('../pages/Home'));
 const Explore = React.lazy(() => import('../pages/Explore'));
+const Tail = React.lazy(() => import('../pages/Tail'));
 
 const loading = () => <div className=""></div>;
 
@@ -36,6 +37,15 @@ const AllRoutes = () => {
                 {
                     path: 'explore',
                     element: <LoadComponent component={Explore} />,
+                },
+                {
+                    path: 'tail',
+                    children: [
+                        {
+                            path: ':hash',
+                            element: <LoadComponent component={Tail} />
+                        },
+                    ],
                 },
             ]
         },

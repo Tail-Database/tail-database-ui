@@ -1,0 +1,45 @@
+import axios from 'axios';
+import { useParams } from 'react-router-dom';
+import { Navbar } from 'components/navbars';
+import Hero from './Hero';
+import Content from './Content';
+import Footer from '../Home/Footer';
+import { useEffect, useState } from 'react';
+import { Tail as ITail } from './types';
+
+const Tail = () => {
+    const { hash } = useParams();
+    const [tail, setTail] = useState<ITail>({
+        hash: '',
+        name: '',
+        category: '',
+        code: '',
+        description: '',
+        eve_coin_id: '',
+        launcher_id: '',
+        nft_uri: '',
+        tail_reveal: '',
+    });
+
+    useEffect(() => {
+        // TODO: remove hardcoded url
+        axios.get(`https://get-tail.tail-database.workers.dev/${hash}`)
+            .then(response => setTail(response.data))
+            .catch(console.error);
+    });
+
+    return (
+        <>
+            <div>
+                <Navbar navClass="navbar-light" fixedWidth hideSearch buttonClass="btn-outline-secondary btn-sm" />
+                <Hero tail={tail} />
+            </div>
+
+            <Content tail={tail} />
+
+            <Footer />
+        </>
+    );
+};
+
+export default Tail;

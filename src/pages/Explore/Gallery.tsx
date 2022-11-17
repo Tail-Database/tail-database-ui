@@ -1,61 +1,25 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Card, Col, Row } from 'react-bootstrap';
 import classNames from 'classnames';
-import FeatherIcon from 'feather-icons-react';
-
-import { LightBox, ImageType } from 'components/LightBox';
-import { GalleryItem } from './types';
+import { Tail } from 'pages/Tail/types';
 
 type GalleryProps = {
-    galleryItems: GalleryItem[];
+    tails: Tail[];
 };
 
-const Gallery = ({ galleryItems }: GalleryProps) => {
-    const [gallery, setGallery] = useState<GalleryItem[]>(galleryItems);
+const Gallery = ({ tails }: GalleryProps) => {
+    const [filteredTails, setFilteredTails] = useState(tails);
     const [category, setCategory] = useState<string>('all');
 
-    const [galleryImages, setGalleryImages] = useState<ImageType[]>(
-        (galleryItems || []).map((album) => {
-            return album.image;
-        })
-    );
-
-    const [isOpen, setIsOpen] = useState<boolean>(false);
-    const [photoIndex, setPhotoIndex] = useState<number>(0);
-
-    // filter image by category
-    const filterImages = (category: string) => {
+    const filterTails = (category: string) => {
         setCategory(category);
-        setTimeout(() => {
-            const galleryAlbums =
-                category === 'all' ? galleryItems : galleryItems.filter((album) => album.category?.includes(category));
-            setGallery(galleryAlbums);
-            setGalleryImages(
-                (galleryAlbums || []).map((album) => {
-                    return album.image;
-                })
-            );
-        }, 300);
+        setTimeout(() => setFilteredTails(category === 'all' ? tails : tails.filter((tail) => tail.category.includes(category))), 300);
     };
 
-    // handle lightbox event
-    const openLightbox = (index: number) => {
-        setPhotoIndex(index);
-        setIsOpen(true);
-    };
-
-    const closeLightbox = () => {
-        setIsOpen(false);
-    };
-
-    const moveNext = () => {
-        setPhotoIndex((prevState) => (prevState + 1) % galleryImages.length);
-    };
-
-    const movePrev = () => {
-        setPhotoIndex((prevState) => (prevState + galleryImages.length - 1) % galleryImages.length);
-    };
+    useEffect(() => {
+        filterTails(category);
+    }, [tails])
 
     return (
         <>
@@ -67,65 +31,91 @@ const Gallery = ({ galleryItems }: GalleryProps) => {
                             className={classNames('filter-menu-item', 'me-1', {
                                 active: category === 'all',
                             })}
-                            onClick={() => filterImages('all')}
+                            onClick={() => filterTails('all')}
                         >
                             All
                         </Link>
                         <Link
                             to="#"
                             className={classNames('filter-menu-item', 'me-1', {
-                                active: category === 'web',
+                                active: category === 'gaming',
                             })}
-                            onClick={() => filterImages('web')}
+                            onClick={() => filterTails('gaming')}
                         >
-                            Web Design
+                            Gaming
                         </Link>
                         <Link
                             to="#"
                             className={classNames('filter-menu-item', 'me-1', {
-                                active: category === 'graphic',
+                                active: category === 'event',
                             })}
-                            onClick={() => filterImages('graphic')}
+                            onClick={() => filterTails('event')}
                         >
-                            Graphic Design
+                            Event
                         </Link>
                         <Link
                             to="#"
                             className={classNames('filter-menu-item', 'me-1', {
-                                active: category === 'illustrator',
+                                active: category === 'education',
                             })}
-                            onClick={() => filterImages('illustrator')}
+                            onClick={() => filterTails('education')}
                         >
-                            Illustrator
+                            Education
                         </Link>
                         <Link
                             to="#"
                             className={classNames('filter-menu-item', 'me-1', {
-                                active: category === 'photography',
+                                active: category === 'meme',
                             })}
-                            onClick={() => filterImages('photography')}
+                            onClick={() => filterTails('meme')}
                         >
-                            Photography
+                            Meme
+                        </Link>
+                        <Link
+                            to="#"
+                            className={classNames('filter-menu-item', 'me-1', {
+                                active: category === 'stablecoin',
+                            })}
+                            onClick={() => filterTails('stablecoin')}
+                        >
+                            Stablecoin
+                        </Link>
+                        <Link
+                            to="#"
+                            className={classNames('filter-menu-item', 'me-1', {
+                                active: category === 'wrapped',
+                            })}
+                            onClick={() => filterTails('wrapped')}
+                        >
+                            Wrapped
+                        </Link>
+                        <Link
+                            to="#"
+                            className={classNames('filter-menu-item', 'me-1', {
+                                active: category === 'platform',
+                            })}
+                            onClick={() => filterTails('platform')}
+                        >
+                            Platform
                         </Link>
                     </div>
                 </Col>
             </Row>
 
             <Row className="grid-portfolio mt-5 justify-content-center">
-                {(gallery || []).map((galleryItem, index) => {
+                {filteredTails.map((tail, index) => {
                     return (
                         <Col xl={4} sm={6} className="filter-item all" key={index.toString()}>
                             <Card className="card-portfolio-item shadow border all">
                                 <div className="p-2">
                                     <div className="card-zoom">
                                         <Link
-                                            to="#"
+                                            to={`/tail/${tail.hash}`}
                                             className="image-popup"
-                                            title={galleryItem.image!.caption}
-                                            onClick={() => openLightbox(index)}
+                                            title={tail.name}
                                         >
                                             <img
-                                                src={galleryItem.image!.src}
+                                                src={tail.nft_uri}
                                                 alt="galleryImage"
                                                 className="img-fluid"
                                             />
@@ -134,8 +124,8 @@ const Gallery = ({ galleryItems }: GalleryProps) => {
                                 </div>
                                 <Card.Body className="p-2">
                                     <div className="mt-2">
-                                        <h5 className="mt-0">{galleryItem.title}</h5>
-                                        <p className="text-muted mb-1">{galleryItem.description}</p>
+                                        <h5 className="mt-0"><Link to={`/tail/${tail.hash}`}>{tail.name}</Link></h5>
+                                        <p className="text-muted mb-1">{tail.description}</p>
                                     </div>
                                 </Card.Body>
                             </Card>
@@ -143,24 +133,6 @@ const Gallery = ({ galleryItems }: GalleryProps) => {
                     );
                 })}
             </Row>
-
-            <div className="text-center mt-5 pb-md-0">
-                <Link to="#" className="btn btn-primary">
-                    <FeatherIcon icon="refresh-ccw" className="icon-xxs me-2" />
-                    Load More
-                </Link>
-            </div>
-
-            {/* image lightbox */}
-            {isOpen && (
-                <LightBox
-                    images={galleryImages}
-                    photoIndex={photoIndex}
-                    closeLightbox={closeLightbox}
-                    moveNext={moveNext}
-                    movePrev={movePrev}
-                />
-            )}
         </>
     );
 };
