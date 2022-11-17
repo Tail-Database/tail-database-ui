@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { Col, Container, Row } from 'react-bootstrap';
 import FeatherIcon from 'feather-icons-react';
 import config from '../../config';
+import { Link } from 'react-router-dom';
 
 export type SearchIndex = Record<string, string[]>;
 
@@ -34,7 +35,7 @@ const Search = ({ searchIndex }: SearchIndexProps) => {
                     <Col lg={7} className="text-center">
                         <h1 className="hero-title">Explore</h1>
                         <p className="fs-17 text-muted">
-                            Search by Asset ID, Name, or Code {JSON.stringify(results)}
+                            Search by Asset ID, Name, or Code
                         </p>
 
                         <div className="mt-5">
@@ -52,6 +53,17 @@ const Search = ({ searchIndex }: SearchIndexProps) => {
                                 </span>
                             </div>
                         </div>
+
+                        {results.length > 0 && (
+                            <div className="mt-5">
+                                <h3>Search results</h3>
+                                <ul>
+                                    {results.map(result => (
+                                        <li><Link to={`/tail/${result}`}>{result}</Link></li>
+                                    ))}
+                                </ul>
+                            </div>
+                        )}
 
                     </Col>
                 </Row>
