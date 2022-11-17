@@ -1,7 +1,21 @@
+import axios from 'axios';
+import React, { useEffect, useState } from 'react';
 import { Col, Container, Row } from 'react-bootstrap';
 import FeatherIcon from 'feather-icons-react';
+import config from '../../config';
 
-const Hero = () => {
+export type SearchIndex = Record<string, string>;
+
+type SearchIndexProps = {
+    searchIndex: SearchIndex;
+}
+
+const Hero = ({ searchIndex }: SearchIndexProps) => {
+    const search = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const searchTerm = event.target.value;
+    };
+
+
     return (
         <section className="hero-4 pb-5 pt-7 py-sm-7 bg-gradient2">
             <Container>
@@ -20,6 +34,7 @@ const Hero = () => {
                                     id="query"
                                     name="query"
                                     placeholder="Search..."
+                                    onChange={search}
                                 />
                                 <span className="form-control-feedback">
                                     <FeatherIcon className="icon-xs" icon="search" />

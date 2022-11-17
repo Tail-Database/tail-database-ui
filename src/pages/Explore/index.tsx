@@ -4,16 +4,21 @@ import { Container } from 'react-bootstrap';
 import { Navbar } from 'components/navbars';
 import BackToTop from 'components/BackToTop';
 import Footer from '../Home/Footer';
-import Hero from './Hero';
+import Hero, { SearchIndex } from './Hero';
 import Gallery from './Gallery';
 import config from '../../config';
 
 const Explore = () => {
     const [tails, setTails] = useState([]);
+    const [searchIndex, setSearchIndex] = useState<SearchIndex>({});
 
     useEffect(() => {
         axios.get(config.GET_TAILS_URL)
             .then(response => setTails(response.data))
+            .catch(console.error);
+
+        axios.get(`${config.GET_SEARCH_INDEX_URL}`)
+            .then(response => setSearchIndex(response.data))
             .catch(console.error);
     });
 
@@ -21,7 +26,7 @@ const Explore = () => {
         <>
             <div>
                 <Navbar navClass="navbar-light" fixedWidth hideSearch buttonClass="btn-outline-secondary btn-sm" />
-                <Hero />
+                <Hero searchIndex={searchIndex} />
             </div>
 
             <section className="overflow-hidden py-5 py-md-6 py-lg-7">
