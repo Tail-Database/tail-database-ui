@@ -4,15 +4,26 @@ import { Col, Container, Row } from 'react-bootstrap';
 import FeatherIcon from 'feather-icons-react';
 import config from '../../config';
 
-export type SearchIndex = Record<string, string>;
+export type SearchIndex = Record<string, string[]>;
 
 type SearchIndexProps = {
     searchIndex: SearchIndex;
 }
 
-const Hero = ({ searchIndex }: SearchIndexProps) => {
+const Search = ({ searchIndex }: SearchIndexProps) => {
+    const [results, setResults] = useState<string[]>([]);
     const search = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const searchTerm = event.target.value;
+        const searchTerms = event.target.value.toLowerCase();
+
+        setResults(
+            searchTerms
+                .split(' ')
+                .reduce<string[]>(
+                    (accum, searchTerm) =>
+                        [...new Set([...accum, ...searchIndex[searchTerm]])],
+                        []
+                )
+        );
     };
 
 
@@ -23,7 +34,7 @@ const Hero = ({ searchIndex }: SearchIndexProps) => {
                     <Col lg={7} className="text-center">
                         <h1 className="hero-title">Explore</h1>
                         <p className="fs-17 text-muted">
-                            Search by Asset ID, Name, or Code
+                            Search by Asset ID, Name, or Code {JSON.stringify(results)}
                         </p>
 
                         <div className="mt-5">
@@ -49,4 +60,4 @@ const Hero = ({ searchIndex }: SearchIndexProps) => {
     );
 };
 
-export default Hero;
+export default Search;

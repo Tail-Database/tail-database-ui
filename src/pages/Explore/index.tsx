@@ -4,7 +4,7 @@ import { Container } from 'react-bootstrap';
 import { Navbar } from 'components/navbars';
 import BackToTop from 'components/BackToTop';
 import Footer from '../Home/Footer';
-import Hero, { SearchIndex } from './Hero';
+import Search, { SearchIndex } from './Search';
 import Gallery from './Gallery';
 import config from '../../config';
 
@@ -26,7 +26,7 @@ const Explore = () => {
         <>
             <div>
                 <Navbar navClass="navbar-light" fixedWidth hideSearch buttonClass="btn-outline-secondary btn-sm" />
-                <Hero searchIndex={searchIndex} />
+                <Search searchIndex={searchIndex} />
             </div>
 
             <section className="overflow-hidden py-5 py-md-6 py-lg-7">
