@@ -6,6 +6,7 @@ import Content from './Content';
 import Footer from '../Home/Footer';
 import { useEffect, useState } from 'react';
 import { Tail as ITail } from './types';
+import config from '../../config';
 
 const Tail = () => {
     const { hash } = useParams();
@@ -22,8 +23,7 @@ const Tail = () => {
     });
 
     useEffect(() => {
-        // TODO: remove hardcoded url
-        axios.get(`https://get-tail.tail-database.workers.dev/${hash}`)
+        axios.get(`${config.GET_TAIL_URL}/${hash}`)
             .then(response => setTail(response.data))
             .catch(console.error);
     });

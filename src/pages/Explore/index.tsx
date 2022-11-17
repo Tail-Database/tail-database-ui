@@ -1,21 +1,18 @@
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { Container } from 'react-bootstrap';
-
-// component
 import { Navbar } from 'components/navbars';
 import BackToTop from 'components/BackToTop';
 import Footer from '../Home/Footer';
-
 import Hero from './Hero';
 import Gallery from './Gallery';
+import config from '../../config';
 
 const Explore = () => {
     const [tails, setTails] = useState([]);
 
     useEffect(() => {
-        // TODO: remove hardcoded url
-        axios.get('https://get-tails.tail-database.workers.dev/')
+        axios.get(config.GET_TAILS_URL)
             .then(response => setTails(response.data))
             .catch(console.error);
     });
