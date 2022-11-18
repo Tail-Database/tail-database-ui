@@ -26,7 +26,7 @@ const Tail = () => {
         axios.get(`${config.GET_TAIL_URL}/${hash}`)
             .then(response => setTail(response.data))
             .catch(console.error);
-    });
+    }, []);
 
     return (
         <>

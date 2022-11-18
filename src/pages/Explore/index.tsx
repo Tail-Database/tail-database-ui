@@ -23,7 +23,7 @@ const Explore = () => {
         axios.get(`${config.GET_SEARCH_INDEX_URL}`)
             .then(response => setSearchIndex(response.data))
             .catch(console.error);
-    });
+    }, []);
 
     return (
         <>
