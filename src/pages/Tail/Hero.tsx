@@ -28,6 +28,30 @@ const Hero = ({ tail }: HeroProps) => {
                         <span className="fs-14">Asset ID</span>
                         <h4 className="mt-1 fw-medium">{tail.hash}</h4>
                     </Col>
+                    {
+                        tail.website_url && (
+                            <Col>
+                                <span className="fs-14">Website</span>
+                                <h4 className="mt-1 fw-medium"><a href={tail.website_url} target="_blank">{tail.website_url}</a></h4>
+                            </Col>
+                        )
+                    }
+                    {
+                        tail.twitter_url && (
+                            <Col>
+                                <span className="fs-14">Twitter</span>
+                                <h4 className="mt-1 fw-medium"><a href={tail.twitter_url} target="_blank">{tail.twitter_url}</a></h4>
+                            </Col>
+                        )
+                    }
+                    {
+                        tail.discord_url && (
+                            <Col>
+                                <span className="fs-14">Discord</span>
+                                <h4 className="mt-1 fw-medium"><a href={tail.discord_url} target="_blank">{tail.discord_url}</a></h4>
+                            </Col>
+                        )
+                    }
                 </Row>
             </Container>
         </section>

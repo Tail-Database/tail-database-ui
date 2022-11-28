@@ -8,4 +8,7 @@ export interface Tail {
     launcher_id: string;
     nft_uri: string;
     tail_reveal: string;
+    website_url?: string;
+    twitter_url?: string;
+    discord_url?: string;
 }
