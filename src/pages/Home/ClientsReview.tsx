@@ -28,7 +28,7 @@ const ClientsReview = () => {
             <Container>
                 <Row>
                     <Col lg={8}>
-                        <h4 className="fw-medium pb-3 mt-0">Trusted by wallets, exchanges, and other applications in the Chia ecosystem</h4>
+                        <h4 className="fw-medium pb-3 mt-0">Used by wallets, exchanges, and other applications in the Chia ecosystem</h4>
                         <ul className="list-inline mt-3 mb-4 mb-lg-0">
                             {(logos || []).map(({ image, url }, index) => {
                                 return (
