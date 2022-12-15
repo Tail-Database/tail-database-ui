@@ -6,6 +6,7 @@ import Root from './Root';
 const Home = React.lazy(() => import('../pages/Home'));
 const Explore = React.lazy(() => import('../pages/Explore'));
 const Tail = React.lazy(() => import('../pages/Tail'));
+const AddTail = React.lazy(() => import('../pages/AddTail'));
 
 const loading = () => <div className=""></div>;
 
@@ -46,6 +47,10 @@ const AllRoutes = () => {
                             element: <LoadComponent component={Tail} />
                         },
                     ],
+                },
+                {
+                    path: 'addTail',
+                    element: <LoadComponent component={AddTail} />,
                 },
             ]
         },
