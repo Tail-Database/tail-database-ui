@@ -9,14 +9,39 @@ import FeatherIcon from 'feather-icons-react';
 // components
 import { FormInput } from 'components/form';
 
+const CATEGORIES = [
+    'gaming',
+    'event',
+    'education',
+    'meme',
+    'stablecoin',
+    'wrapped',
+    'platform',
+];
+
+const isValid = (urlString: string) => {
+    try {
+        const url = new URL(urlString);
+
+        return url.protocol === "http:" || url.protocol === "https:";
+    } catch (_) { }
+
+    return false;
+};
+
 const AddTail = () => {
     // form validation schema
     const schemaResolver = yupResolver(
         yup.object().shape({
-            fname: yup.string().required('Please enter first name'),
-            lname: yup.string().required('Please enter last name'),
-            email: yup.string().required('Please enter Email').email('Please enter valid Email'),
-            message: yup.string().required('Please enter Message'),
+            hash: yup.string().length(64).required('Please enter hash'),
+            name: yup.string().min(1).max(100).required('Please enter name'),
+            code: yup.string().min(1).max(5).required('Please enter code'),
+            category: yup.string().oneOf(CATEGORIES).required('Please enter category'),
+            coin: yup.string().length(64).required('Please enter Coin ID'),
+            logo: yup.string().length(64).required('Please enter NFT ID'),
+            website_url: yup.string().url().required('Please enter website URL'),
+            twitter_url: yup.string().url().required('Please enter twitter URL'),
+            discord_url: yup.string().url().required('Please enter discord URL'),
         })
     );
 
