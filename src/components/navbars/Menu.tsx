@@ -35,6 +35,12 @@ const Menu = ({ navClass, buttonClass, showDownload, loggedInUser }: MenuProps) 
             </Nav.Item>
 
             <Nav.Item as="li">
+                <NavLink to="/addTail" className="nav-link btn me-2 shadow-none">
+                    Add TAIL
+                </NavLink>
+            </Nav.Item>
+
+            <Nav.Item as="li">
                 <a href="https://github.com/Tail-Database/tail-database-app" target="_blank" className="btn btn-primary btn-sm">
                     Download
                 </a>
