@@ -19,16 +19,6 @@ const CATEGORIES = [
     'platform',
 ];
 
-const isValid = (urlString: string) => {
-    try {
-        const url = new URL(urlString);
-
-        return url.protocol === "http:" || url.protocol === "https:";
-    } catch (_) { }
-
-    return false;
-};
-
 const AddTail = () => {
     // form validation schema
     const schemaResolver = yupResolver(
@@ -36,12 +26,12 @@ const AddTail = () => {
             hash: yup.string().length(64).required('Please enter hash'),
             name: yup.string().min(1).max(100).required('Please enter name'),
             code: yup.string().min(1).max(5).required('Please enter code'),
-            category: yup.string().oneOf(CATEGORIES).required('Please enter category'),
+            category: yup.string().oneOf(CATEGORIES).required('Please select category'),
             coin: yup.string().length(64).required('Please enter Coin ID'),
-            logo: yup.string().length(64).required('Please enter NFT ID'),
-            website_url: yup.string().url().required('Please enter website URL'),
-            twitter_url: yup.string().url().required('Please enter twitter URL'),
-            discord_url: yup.string().url().required('Please enter discord URL'),
+            logo: yup.string().length(62).required('Please enter NFT ID'),
+            website_url: yup.string().optional().url(),
+            twitter_url: yup.string().optional().url(),
+            discord_url: yup.string().optional().url(),
         })
     );
 
@@ -163,13 +153,19 @@ const AddTail = () => {
                                             />
                                         </Col>
                                         <Col lg={12}>
-                                            <select className="form-select">
+                                            <FormInput
+                                                type="select"
+                                                name="category"
+                                                label="Category"
+                                                placeholder="Category"
+                                                containerClass={'mb-3'}
+                                                register={register}
+                                                errors={errors}
+                                                control={control}
+                                            >
                                                 <option value="option_select0">Category</option>
-                                                <option value="option_select1">Option select name</option>
-                                                <option value="option_select2">Option select name</option>
-                                                <option value="option_select2">Option select name</option>
-                                                <option value="option_select2">Option select name</option>
-                                            </select>
+                                                {CATEGORIES.map(category => (<option value={category}>{category}</option>))}
+                                            </FormInput>
                                         </Col>
 
                                         <Col lg={12}>
