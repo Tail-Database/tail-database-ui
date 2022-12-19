@@ -121,8 +121,8 @@ const AddTail = () => {
                                                 <FormInput
                                                     type="hash"
                                                     name="hash"
-                                                    label="Hash"
-                                                    placeholder="Hash"
+                                                    label="Asset ID"
+                                                    placeholder="Asset ID"
                                                     containerClass={'mb-3'}
                                                     register={register}
                                                     errors={errors}
