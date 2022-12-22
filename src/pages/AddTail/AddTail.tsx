@@ -1,7 +1,9 @@
 import axios from 'axios';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Button, Card, Col, Container, Row } from 'react-bootstrap';
 import { FieldValues, SubmitHandler, useForm } from 'react-hook-form';
+import SyntaxHighlighter from 'react-syntax-highlighter';
+import { docco } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import FeatherIcon from 'feather-icons-react';
@@ -24,6 +26,57 @@ const CATEGORIES = [
 const AddTail = () => {
     const [inserted, setInserted] = useState(false);
     const [failedMessage, setFailedMessage] = useState('');
+    const [signatureAddress, setSignatureAddress] = useState('');
+    const [signatureMessage, setSignatureMessage] = useState('');
+    const [hash, setHash] = useState('');
+    const [coinId, setCoinId] = useState('');
+
+    const onHashChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        if (event.target.value.length == 64) {
+            setHash(event.target.value);
+        } else {
+            setHash('');
+            setSignatureAddress('');
+            setSignatureMessage('');
+        }
+    };
+    const onCoinChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        if (event.target.value.length == 64) {
+            setCoinId(event.target.value);
+        } else {
+            setCoinId('');
+            setSignatureAddress('');
+            setSignatureMessage('');
+            setFailedMessage('');
+        }
+    };
+
+    useEffect(() => {
+        (async() => {
+            if (hash.length == 64 && coinId.length == 64) {
+                try {
+                    const response = await axios.post(`${config.AUTH_URL}/${hash}`, { coinId });
+
+                    const { address, message } = response.data;
+
+                    if (address && message) {
+                        setSignatureAddress(address);
+                        setSignatureMessage(message);
+                        setFailedMessage('');
+                    } else {
+                        setSignatureAddress('');
+                        setSignatureMessage('');
+                        setFailedMessage('');
+                    }
+                } catch (err: any) {
+                    console.error(err);
+                    setFailedMessage(err);
+                    setSignatureAddress('');
+                    setSignatureMessage('');
+                }
+            }
+        })();
+    }, [hash, coinId])
 
     // form validation schema
     const schemaResolver = yupResolver(
@@ -48,7 +101,7 @@ const AddTail = () => {
         formState: { errors },
     } = methods;
 
-    const onSubmit: SubmitHandler<FieldValues> = async ({ hash, name, code, logo, coin, category, description, website_url, twitter_url, discord_url }) => {
+    const onSubmit: SubmitHandler<FieldValues> = async ({ hash, name, code, logo, coin, category, description, website_url, twitter_url, discord_url, signature }) => {
         const decode_result = decode(logo, 'bech32m');
 
         if (!decode_result) {
@@ -81,7 +134,7 @@ const AddTail = () => {
                 ...(website_url ? { website_url } : {}),
                 ...(twitter_url ? { twitter_url } : {}),
                 ...(discord_url ? { discord_url } : {}),
-            });
+            }, { headers: { 'x-chia-signature': signature }});
 
             const { tx_id, error } = response.data;
 
@@ -96,8 +149,9 @@ const AddTail = () => {
                     setFailedMessage('Failed to submit TAIL record to mempool. You can only submit the same TAIL hash once. If you recently submitted a record you must wait for it to clear before submitting another.');
                 }
             }
-        } catch (err) {
+        } catch (err: any) {
             console.error(err);
+            setFailedMessage(err);
         }
     };
 
@@ -127,6 +181,7 @@ const AddTail = () => {
                                                     register={register}
                                                     errors={errors}
                                                     control={control}
+                                                    onChange={onHashChange}
                                                 />
                                             </Col>
                                             <Col lg={12}>
@@ -175,6 +230,7 @@ const AddTail = () => {
                                                     register={register}
                                                     errors={errors}
                                                     control={control}
+                                                    onChange={onCoinChange}
                                                 />
                                             </Col>
                                             <Col lg={12}>
@@ -228,7 +284,6 @@ const AddTail = () => {
                                                     {CATEGORIES.map(category => (<option value={category} key={category}>{category}</option>))}
                                                 </FormInput>
                                             </Col>
-
                                             <Col lg={12}>
                                                 <FormInput
                                                     type="textarea"
@@ -242,8 +297,33 @@ const AddTail = () => {
                                                     control={control}
                                                 />
                                             </Col>
+                                            <Col lg={12}>
+                                                <h4>Authorization</h4>
+                                                <p>
+                                                    To make this change you need to sign a message using the wallet which minted the CAT. The CLI command you need to execute will appear once you have populated the asset id and coin id correctly.
+                                                </p>
+                                                {signatureAddress && signatureMessage && (
+                                                    <SyntaxHighlighter language="lisp" style={docco} wrapLongLines>
+                                                        {`chia wallet sign_message -a ${signatureAddress} -m ${signatureMessage}`}
+                                                    </SyntaxHighlighter>
+                                                )}
+                                            </Col>
+                                            {signatureAddress && signatureMessage && (
+                                                <Col lg={12}>
+                                                    <FormInput
+                                                        type="signature"
+                                                        name="signature"
+                                                        label="Signature"
+                                                        placeholder="Signature"
+                                                        containerClass={'mb-3'}
+                                                        register={register}
+                                                        errors={errors}
+                                                        control={control}
+                                                    />
+                                                </Col>
+                                            )}
                                             <Col lg="auto" className="mb-0">
-                                                <Button type="submit">
+                                                <Button type="submit" disabled={!signatureAddress || !signatureMessage}>
                                                     Add
                                                     <span className="icon icon-xs text-white ms-1">
                                                         <FeatherIcon icon="plus-circle" />
