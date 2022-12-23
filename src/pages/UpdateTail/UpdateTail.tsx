@@ -80,15 +80,15 @@ const UpdateTail = ({ tail }: { tail: Tail }) => {
     // form validation schema
     const schemaResolver = yupResolver(
         yup.object().shape({
-            hash: yup.string().length(64).required('Please enter hash'),
-            name: yup.string().min(1).max(100).required('Please enter name'),
-            code: yup.string().min(1).max(5).required('Please enter code'),
-            category: yup.string().oneOf(CATEGORIES).required('Please select category'),
-            coin: yup.string().length(64).required('Please enter Coin ID'),
-            logo: yup.string().length(62).required('Please enter NFT ID'),
-            website_url: yup.string().optional().url(),
-            twitter_url: yup.string().optional().url(),
-            discord_url: yup.string().optional().url(),
+            hash: yup.string().length(64).required('Please enter hash').default(tail.hash),
+            name: yup.string().min(1).max(100).required('Please enter name').default(tail.name),
+            code: yup.string().min(1).max(5).required('Please enter code').default(tail.code),
+            category: yup.string().oneOf(CATEGORIES).required('Please select category').default(tail.category),
+            coin: yup.string().length(64).required('Please enter Coin ID').default(tail.eve_coin_id),
+            logo: yup.string().length(62).required('Please enter NFT ID').default(nftId(tail.launcher_id)),
+            website_url: yup.string().optional().url().default(tail.website_url),
+            twitter_url: yup.string().optional().url().default(tail.twitter_url),
+            discord_url: yup.string().optional().url().default(tail.discord_url),
         })
     );
 
@@ -100,7 +100,7 @@ const UpdateTail = ({ tail }: { tail: Tail }) => {
         formState: { errors },
     } = methods;
 
-    const onSubmit: SubmitHandler<FieldValues> = async ({ hash, name, code, logo, coin, category, description, website_url, twitter_url, discord_url, signature }) => {
+    const onSubmit: SubmitHandler<FieldValues> = async ({ name, code, logo, category, description, website_url, twitter_url, discord_url, signature }) => {
         const decode_result = decode(logo, 'bech32m');
 
         if (!decode_result) {
@@ -180,7 +180,7 @@ const UpdateTail = ({ tail }: { tail: Tail }) => {
                                                     register={register}
                                                     errors={errors}
                                                     control={control}
-                                                    value={tail.hash}
+                                                    defaultValue={tail.hash}
                                                     disabled
                                                 />
                                             </Col>
@@ -194,7 +194,7 @@ const UpdateTail = ({ tail }: { tail: Tail }) => {
                                                     register={register}
                                                     errors={errors}
                                                     control={control}
-                                                    value={tail.name}
+                                                    defaultValue={tail.name}
                                                 />
                                             </Col>
                                             <Col lg={12}>
@@ -207,7 +207,7 @@ const UpdateTail = ({ tail }: { tail: Tail }) => {
                                                     register={register}
                                                     errors={errors}
                                                     control={control}
-                                                    value={tail.code}
+                                                    defaultValue={tail.code}
                                                 />
                                             </Col>
                                             <Col lg={12}>
@@ -220,7 +220,7 @@ const UpdateTail = ({ tail }: { tail: Tail }) => {
                                                     register={register}
                                                     errors={errors}
                                                     control={control}
-                                                    value={nftId(tail.launcher_id)}
+                                                    defaultValue={nftId(tail.launcher_id)}
                                                 />
                                             </Col>
                                             <Col lg={12}>
@@ -233,7 +233,7 @@ const UpdateTail = ({ tail }: { tail: Tail }) => {
                                                     register={register}
                                                     errors={errors}
                                                     control={control}
-                                                    value={tail.eve_coin_id}
+                                                    defaultValue={tail.eve_coin_id}
                                                     disabled
                                                 />
                                             </Col>
@@ -247,7 +247,7 @@ const UpdateTail = ({ tail }: { tail: Tail }) => {
                                                     register={register}
                                                     errors={errors}
                                                     control={control}
-                                                    value={tail.website_url}
+                                                    defaultValue={tail.website_url}
                                                 />
                                             </Col>
                                             <Col lg={12}>
@@ -260,7 +260,7 @@ const UpdateTail = ({ tail }: { tail: Tail }) => {
                                                     register={register}
                                                     errors={errors}
                                                     control={control}
-                                                    value={tail.twitter_url}
+                                                    defaultValue={tail.twitter_url}
                                                 />
                                             </Col>
                                             <Col lg={12}>
@@ -273,7 +273,7 @@ const UpdateTail = ({ tail }: { tail: Tail }) => {
                                                     register={register}
                                                     errors={errors}
                                                     control={control}
-                                                    value={tail.discord_url}
+                                                    defaultValue={tail.discord_url}
                                                 />
                                             </Col>
                                             <Col lg={12}>
@@ -286,7 +286,7 @@ const UpdateTail = ({ tail }: { tail: Tail }) => {
                                                     register={register}
                                                     errors={errors}
                                                     control={control}
-                                                    value={tail.category}
+                                                    defaultValue={tail.category}
                                                 >
                                                     <option value="option_select0">Category</option>
                                                     {CATEGORIES.map(category => (<option value={category} key={category}>{category}</option>))}
@@ -303,7 +303,7 @@ const UpdateTail = ({ tail }: { tail: Tail }) => {
                                                     register={register}
                                                     errors={errors}
                                                     control={control}
-                                                    value={tail.description}
+                                                    defaultValue={tail.description}
                                                 />
                                             </Col>
                                             <Col lg={12}>
