@@ -1,4 +1,5 @@
 import { Col, Container, Row } from 'react-bootstrap';
+import { Link } from 'react-router-dom';
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import { docco } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 import { Tail } from './types';
@@ -43,6 +44,11 @@ const Content = ({ tail }: ContentProps) => {
                             </p>
                         </div>
                     </Col>
+                </Row>
+                <Row className="border-top border-bottom py-4 align-items-center mt-5">
+                    <Link to={`/updateTail/${tail.hash}`} className="btn btn-secondary btn-sm">
+                        Update data
+                    </Link>
                 </Row>
             </Container>
         </section>
