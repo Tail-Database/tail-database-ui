@@ -39,6 +39,10 @@ const UpdateTail = ({ tail }: { tail: Tail }) => {
     };
 
     const nftId = (launcherId: string): string => {
+        if (!launcherId) {
+            return '';
+        }
+
         const data = convertbits(hexToBytes(launcherId), 8, 5);
 
         if (data) {
