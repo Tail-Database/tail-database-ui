@@ -7,6 +7,7 @@ const Home = React.lazy(() => import('../pages/Home'));
 const Explore = React.lazy(() => import('../pages/Explore'));
 const Tail = React.lazy(() => import('../pages/Tail'));
 const AddTail = React.lazy(() => import('../pages/AddTail'));
+const UpdateTail = React.lazy(() => import('../pages/UpdateTail'));
 
 const loading = () => <div className=""></div>;
 
@@ -51,6 +52,15 @@ const AllRoutes = () => {
                 {
                     path: 'addTail',
                     element: <LoadComponent component={AddTail} />,
+                },
+                {
+                    path: 'updateTail',
+                    children: [
+                        {
+                            path: ':hash',
+                            element: <LoadComponent component={UpdateTail} />
+                        },
+                    ],
                 },
             ]
         },

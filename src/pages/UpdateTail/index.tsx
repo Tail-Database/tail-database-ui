@@ -1,11 +1,12 @@
 import axios from 'axios';
+import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { Navbar } from 'components/navbars';
-import Hero from './Hero';
-import Content from './Content';
+import BackToTop from 'components/BackToTop';
 import Footer from '../Home/Footer';
-import { useEffect, useState } from 'react';
-import { Tail } from './types';
+import Hero from './Hero';
+import UpdateTail from './UpdateTail';
+import { Tail } from '../Tail/types';
 import config from '../../config';
 
 
@@ -31,14 +32,21 @@ export default () => {
 
     return (
         <>
-            <div>
-                <Navbar navClass="navbar-light" fixedWidth hideSearch buttonClass="btn-outline-secondary btn-sm" />
-                <Hero tail={tail} />
+            <div className="header-7 bg-gradient2">
+                <Navbar
+                    hideSearch
+                    fixedWidth
+                    navClass="navbar-light zindex-10"
+                    buttonClass="btn-outline-secondary btn-sm"
+                />
+
+                <Hero />
             </div>
 
-            <Content tail={tail} />
-
+            <UpdateTail tail={tail} />
             <Footer />
+
+            <BackToTop />
         </>
     );
 };

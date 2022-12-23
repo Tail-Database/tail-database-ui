@@ -6,7 +6,7 @@ import Footer from '../Home/Footer';
 import Hero from './Hero';
 import AddTail from './AddTail';
 
-const Contact = () => {
+export default () => {
     return (
         <>
             <div className="header-7 bg-gradient2">
@@ -27,5 +27,3 @@ const Contact = () => {
         </>
     );
 };
-
-export default Contact;
