@@ -43,7 +43,7 @@ export default () => {
                 <Hero />
             </div>
 
-            <UpdateTail tail={tail} />
+            {tail.hash && (<UpdateTail tail={tail} />)}
             <Footer />
 
             <BackToTop />

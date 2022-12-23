@@ -79,7 +79,7 @@ const UpdateTail = ({ tail }: { tail: Tail }) => {
                 }
             }
         })();
-    }, [tail])
+    }, [tail]);
 
     // form validation schema
     const schemaResolver = yupResolver(
