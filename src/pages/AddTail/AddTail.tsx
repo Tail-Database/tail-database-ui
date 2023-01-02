@@ -163,6 +163,9 @@ const AddTail = () => {
                 )}
                 {!inserted && (
                     <Row className="align-items-center">
+                        <Col lg={12} style={{color: 'red'}}>
+                            When you add or update details in Tail Database the update is applied to DataLayer however this website is only updated once every 10 minutes. If you use the Tail Database standalone application you can see updates quicker as that updates more frequently.
+                        </Col>
                         <Col lg={12}>
                             <Card className="shadow-none">
                                 {failedMessage && (
