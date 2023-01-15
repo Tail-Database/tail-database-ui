@@ -12,6 +12,13 @@ import config from 'config';
 
 // components
 import { FormInput } from 'components/form';
+import { useWalletConnectClient } from "../../contexts/ClientContext";
+import { useJsonRpc } from "../../contexts/JsonRpcContext";
+import {
+    DEFAULT_MAIN_CHAINS,
+    DEFAULT_TEST_CHAINS,
+    DEFAULT_CHIA_METHODS,
+} from "../../walletconnect/constants";
 
 const CATEGORIES = [
     'gaming',
@@ -24,6 +31,33 @@ const CATEGORIES = [
 ];
 
 const AddTail = () => {
+    // Use `JsonRpcContext` to provide us with relevant RPC methods and states.
+    const {
+        ping,
+        chiaRpc,
+        isRpcRequestPending,
+        rpcResult,
+        isTestnet,
+        setIsTestnet,
+    } = useJsonRpc();
+    // Initialize the WalletConnect client.
+    const {
+        client,
+        pairings,
+        session,
+        connect,
+        disconnect,
+        chains,
+        relayerRegion,
+        accounts,
+        balances,
+        isFetchingBalances,
+        isInitializing,
+        setChains,
+        setRelayerRegion,
+    } = useWalletConnectClient();
+    const chainOptions = isTestnet ? DEFAULT_TEST_CHAINS : DEFAULT_MAIN_CHAINS;
+
     const [inserted, setInserted] = useState(false);
     const [failedMessage, setFailedMessage] = useState('');
     const [signatureAddress, setSignatureAddress] = useState('');
@@ -52,7 +86,7 @@ const AddTail = () => {
     };
 
     useEffect(() => {
-        (async() => {
+        (async () => {
             if (hash.length == 64 && coinId.length == 64) {
                 try {
                     const response = await axios.post(`${config.AUTH_URL}/${hash}`, { coinId });
@@ -134,7 +168,7 @@ const AddTail = () => {
                 ...(website_url ? { website_url } : {}),
                 ...(twitter_url ? { twitter_url } : {}),
                 ...(discord_url ? { discord_url } : {}),
-            }, { headers: { 'x-chia-signature': signature }});
+            }, { headers: { 'x-chia-signature': signature } });
 
             const { tx_id, error } = response.data;
 
@@ -163,7 +197,25 @@ const AddTail = () => {
                 )}
                 {!inserted && (
                     <Row className="align-items-center">
-                        <Col lg={12} style={{color: 'red'}}>
+                        <Col log={12}>
+                            {accounts.map((account) => {
+                                const [namespace, reference, address] = account.split(":");
+                                const chainId = `${namespace}:${reference}`;
+                                return (
+                                    <Blockchain
+                                        key={account}
+                                        active={true}
+                                        chainData={chainData}
+                                        fetching={isFetchingBalances}
+                                        address={address}
+                                        chainId={chainId}
+                                        balances={balances}
+                                        actions={getBlockchainActions(chainId)}
+                                    />
+                                );
+                            })}
+                        </Col>
+                        <Col lg={12} style={{ color: 'red' }}>
                             When you add or update details in Tail Database the update is applied to DataLayer however this website is only updated once every 10 minutes. If you use the Tail Database standalone application you can see updates quicker as that updates more frequently.
                         </Col>
                         <Col lg={12}>
