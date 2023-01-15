@@ -7,9 +7,7 @@ const Hero = () => {
                 <Row className="justify-content-center">
                     <Col lg={7} className="text-center">
                         <h1 className="hero-title mb-0">Update CAT</h1>
-                        <p className="mb-4 fs-17 text-muted">
-                            Update the data related to this CAT in Tail Database
-                        </p>
+                        <p className="mb-4 fs-17 text-muted">Update the data related to this CAT in Tail Database</p>
                     </Col>
                 </Row>
             </Container>

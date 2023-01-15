@@ -41,7 +41,11 @@ const Menu = ({ navClass, buttonClass, showDownload, loggedInUser }: MenuProps) 
             </Nav.Item>
 
             <Nav.Item as="li">
-                <a href="https://github.com/Tail-Database/tail-database-app" target="_blank" className="btn btn-primary btn-sm">
+                <a
+                    href="https://github.com/Tail-Database/tail-database-app"
+                    target="_blank"
+                    className="btn btn-primary btn-sm"
+                >
                     Download
                 </a>
             </Nav.Item>

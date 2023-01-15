@@ -12,34 +12,19 @@ import config from 'config';
 
 // components
 import { FormInput } from 'components/form';
-import { useWalletConnectClient } from "../../contexts/ClientContext";
-import { useJsonRpc } from "../../contexts/JsonRpcContext";
-import {
-    DEFAULT_MAIN_CHAINS,
-    DEFAULT_TEST_CHAINS,
-    DEFAULT_CHIA_METHODS,
-} from "../../walletconnect/constants";
+import { useWalletConnectClient } from '../../walletconnect/contexts/ClientContext';
+import { useJsonRpc } from '../../walletconnect/contexts/JsonRpcContext';
+import { DEFAULT_MAIN_CHAINS, DEFAULT_TEST_CHAINS, DEFAULT_CHIA_METHODS } from '../../walletconnect/constants';
+import { AccountAction } from '../../walletconnect/helpers';
+import { useChainData } from '../../walletconnect/contexts/ChainDataContext';
+import Blockchain from '../../walletconnect/components/Blockchain';
 
-const CATEGORIES = [
-    'gaming',
-    'event',
-    'education',
-    'meme',
-    'stablecoin',
-    'wrapped',
-    'platform',
-];
+const CATEGORIES = ['gaming', 'event', 'education', 'meme', 'stablecoin', 'wrapped', 'platform'];
 
 const AddTail = () => {
     // Use `JsonRpcContext` to provide us with relevant RPC methods and states.
-    const {
-        ping,
-        chiaRpc,
-        isRpcRequestPending,
-        rpcResult,
-        isTestnet,
-        setIsTestnet,
-    } = useJsonRpc();
+    const { ping, chiaRpc, isRpcRequestPending, rpcResult, isTestnet, setIsTestnet } = useJsonRpc();
+    const { chainData } = useChainData();
     // Initialize the WalletConnect client.
     const {
         client,
@@ -50,20 +35,22 @@ const AddTail = () => {
         chains,
         relayerRegion,
         accounts,
-        balances,
-        isFetchingBalances,
         isInitializing,
         setChains,
         setRelayerRegion,
     } = useWalletConnectClient();
     const chainOptions = isTestnet ? DEFAULT_TEST_CHAINS : DEFAULT_MAIN_CHAINS;
-
+    const [modal, setModal] = useState('');
     const [inserted, setInserted] = useState(false);
     const [failedMessage, setFailedMessage] = useState('');
     const [signatureAddress, setSignatureAddress] = useState('');
     const [signatureMessage, setSignatureMessage] = useState('');
     const [hash, setHash] = useState('');
     const [coinId, setCoinId] = useState('');
+    const closeModal = () => setModal('');
+    const openPairingModal = () => setModal('pairing');
+    const openPingModal = () => setModal('ping');
+    const openRequestModal = () => setModal('request');
 
     const onHashChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.value.length == 64) {
@@ -110,7 +97,7 @@ const AddTail = () => {
                 }
             }
         })();
-    }, [hash, coinId])
+    }, [hash, coinId]);
 
     // form validation schema
     const schemaResolver = yupResolver(
@@ -135,7 +122,19 @@ const AddTail = () => {
         formState: { errors },
     } = methods;
 
-    const onSubmit: SubmitHandler<FieldValues> = async ({ hash, name, code, logo, coin, category, description, website_url, twitter_url, discord_url, signature }) => {
+    const onSubmit: SubmitHandler<FieldValues> = async ({
+        hash,
+        name,
+        code,
+        logo,
+        coin,
+        category,
+        description,
+        website_url,
+        twitter_url,
+        discord_url,
+        signature,
+    }) => {
         const decode_result = decode(logo, 'bech32m');
 
         if (!decode_result) {
@@ -154,21 +153,25 @@ const AddTail = () => {
             return;
         }
 
-        const launcherId = launcher_id_raw.map(n => n.toString(16).padStart(2, '0')).join('');
+        const launcherId = launcher_id_raw.map((n) => n.toString(16).padStart(2, '0')).join('');
 
         try {
-            const response = await axios.post(config.ADD_TAIL_URL, {
-                hash,
-                name,
-                code,
-                category,
-                description,
-                launcherId,
-                eveCoinId: coin,
-                ...(website_url ? { website_url } : {}),
-                ...(twitter_url ? { twitter_url } : {}),
-                ...(discord_url ? { discord_url } : {}),
-            }, { headers: { 'x-chia-signature': signature } });
+            const response = await axios.post(
+                config.ADD_TAIL_URL,
+                {
+                    hash,
+                    name,
+                    code,
+                    category,
+                    description,
+                    launcherId,
+                    eveCoinId: coin,
+                    ...(website_url ? { website_url } : {}),
+                    ...(twitter_url ? { twitter_url } : {}),
+                    ...(discord_url ? { discord_url } : {}),
+                },
+                { headers: { 'x-chia-signature': signature } }
+            );
 
             const { tx_id, error } = response.data;
 
@@ -180,7 +183,9 @@ const AddTail = () => {
                 if (error) {
                     setFailedMessage(error);
                 } else {
-                    setFailedMessage('Failed to submit TAIL record to mempool. You can only submit the same TAIL hash once. If you recently submitted a record you must wait for it to clear before submitting another.');
+                    setFailedMessage(
+                        'Failed to submit TAIL record to mempool. You can only submit the same TAIL hash once. If you recently submitted a record you must wait for it to clear before submitting another.'
+                    );
                 }
             }
         } catch (err: any) {
@@ -189,39 +194,108 @@ const AddTail = () => {
         }
     };
 
+    const getChiaActions = (): AccountAction[] => {
+        const onSendTransaction = async (chainId: string, address: string) => {
+            openRequestModal();
+            await chiaRpc.testSendTransaction(chainId, address);
+        };
+
+        const onNewAddress = async (chainId: string, address: string) => {
+            openRequestModal();
+            await chiaRpc.testNewAddress(chainId, address);
+        };
+
+        const onLogIn = async (chainId: string, address: string) => {
+            openRequestModal();
+            await chiaRpc.testLogIn(chainId, address);
+        };
+
+        const onSignMessageByAddress = async (chainId: string, address: string) => {
+            openRequestModal();
+            await chiaRpc.testSignMessageByAddress(chainId, address);
+        };
+
+        const onSignMessageById = async (chainId: string, address: string) => {
+            openRequestModal();
+            await chiaRpc.testSignMessageById(chainId, address);
+        };
+
+        const onGetWalletSyncStatus = async (chainId: string, address: string) => {
+            openRequestModal();
+            await chiaRpc.testGetWalletSyncStatus(chainId, address);
+        };
+
+        return [
+            {
+                method: DEFAULT_CHIA_METHODS.CHIA_SEND_TRANSACTION,
+                callback: onSendTransaction,
+            },
+            {
+                method: DEFAULT_CHIA_METHODS.CHIA_NEW_ADDRESS,
+                callback: onNewAddress,
+            },
+            {
+                method: DEFAULT_CHIA_METHODS.CHIA_LOG_IN,
+                callback: onLogIn,
+            },
+            {
+                method: DEFAULT_CHIA_METHODS.CHIA_SIGN_MESSAGE_BY_ADDRESS,
+                callback: onSignMessageByAddress,
+            },
+            {
+                method: DEFAULT_CHIA_METHODS.CHIA_SIGN_MESSAGE_BY_ID,
+                callback: onSignMessageById,
+            },
+            {
+                method: DEFAULT_CHIA_METHODS.CHIA_GET_WALLET_SYNC_STATUS,
+                callback: onGetWalletSyncStatus,
+            },
+        ];
+    };
+
+    const getBlockchainActions = (chainId: string) => {
+        const [namespace] = chainId.split(':');
+        switch (namespace) {
+            case 'chia':
+                return getChiaActions();
+            default:
+                break;
+        }
+    };
+
     return (
         <section className="section pb-lg-7 py-4 position-relative">
             <Container>
-                {inserted && (
-                    <>TAIL record submitted to mempool</>
-                )}
+                {inserted && <>TAIL record submitted to mempool</>}
                 {!inserted && (
                     <Row className="align-items-center">
                         <Col log={12}>
                             {accounts.map((account) => {
-                                const [namespace, reference, address] = account.split(":");
+                                const [namespace, reference, address] = account.split(':');
                                 const chainId = `${namespace}:${reference}`;
                                 return (
                                     <Blockchain
                                         key={account}
                                         active={true}
                                         chainData={chainData}
-                                        fetching={isFetchingBalances}
                                         address={address}
                                         chainId={chainId}
-                                        balances={balances}
                                         actions={getBlockchainActions(chainId)}
                                     />
                                 );
                             })}
                         </Col>
                         <Col lg={12} style={{ color: 'red' }}>
-                            When you add or update details in Tail Database the update is applied to DataLayer however this website is only updated once every 10 minutes. If you use the Tail Database standalone application you can see updates quicker as that updates more frequently.
+                            When you add or update details in Tail Database the update is applied to DataLayer however
+                            this website is only updated once every 10 minutes. If you use the Tail Database standalone
+                            application you can see updates quicker as that updates more frequently.
                         </Col>
                         <Col lg={12}>
                             <Card className="shadow-none">
                                 {failedMessage && (
-                                    <div className="alert alert-danger" role="alert">{failedMessage}</div>
+                                    <div className="alert alert-danger" role="alert">
+                                        {failedMessage}
+                                    </div>
                                 )}
                                 <Card.Body className="p-xl-5 p-0">
                                     <form onSubmit={handleSubmit(onSubmit)}>
@@ -336,7 +410,11 @@ const AddTail = () => {
                                                     control={control}
                                                 >
                                                     <option value="option_select0">Category</option>
-                                                    {CATEGORIES.map(category => (<option value={category} key={category}>{category}</option>))}
+                                                    {CATEGORIES.map((category) => (
+                                                        <option value={category} key={category}>
+                                                            {category}
+                                                        </option>
+                                                    ))}
                                                 </FormInput>
                                             </Col>
                                             <Col lg={12}>
@@ -355,7 +433,9 @@ const AddTail = () => {
                                             <Col lg={12}>
                                                 <h4>Authorization</h4>
                                                 <p>
-                                                    To make this change you need to sign a message using the wallet which minted the CAT. The CLI command you need to execute will appear once you have populated the asset id and coin id correctly.
+                                                    To make this change you need to sign a message using the wallet
+                                                    which minted the CAT. The CLI command you need to execute will
+                                                    appear once you have populated the asset id and coin id correctly.
                                                 </p>
                                                 {signatureAddress && signatureMessage && (
                                                     <SyntaxHighlighter language="lisp" style={docco} wrapLongLines>

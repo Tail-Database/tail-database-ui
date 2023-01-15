@@ -14,15 +14,7 @@ import { Tail } from '../Tail/types';
 // components
 import { FormInput } from 'components/form';
 
-const CATEGORIES = [
-    'gaming',
-    'event',
-    'education',
-    'meme',
-    'stablecoin',
-    'wrapped',
-    'platform',
-];
+const CATEGORIES = ['gaming', 'event', 'education', 'meme', 'stablecoin', 'wrapped', 'platform'];
 
 const UpdateTail = ({ tail }: { tail: Tail }) => {
     const [inserted, setInserted] = useState(false);
@@ -34,7 +26,7 @@ const UpdateTail = ({ tail }: { tail: Tail }) => {
         for (var bytes = [], c = 0; c < hex.length; c += 2) {
             bytes.push(parseInt(hex.substr(c, 2), 16));
         }
-            
+
         return bytes;
     };
 
@@ -59,9 +51,9 @@ const UpdateTail = ({ tail }: { tail: Tail }) => {
             if (tail.hash && tail.eve_coin_id) {
                 try {
                     const response = await axios.post(`${config.AUTH_URL}/${tail.hash}`, { coinId: tail.eve_coin_id });
-    
+
                     const { address, message } = response.data;
-    
+
                     if (address && message) {
                         setSignatureAddress(address);
                         setSignatureMessage(message);
@@ -104,7 +96,17 @@ const UpdateTail = ({ tail }: { tail: Tail }) => {
         formState: { errors },
     } = methods;
 
-    const onSubmit: SubmitHandler<FieldValues> = async ({ name, code, logo, category, description, website_url, twitter_url, discord_url, signature }) => {
+    const onSubmit: SubmitHandler<FieldValues> = async ({
+        name,
+        code,
+        logo,
+        category,
+        description,
+        website_url,
+        twitter_url,
+        discord_url,
+        signature,
+    }) => {
         const decode_result = decode(logo, 'bech32m');
 
         if (!decode_result) {
@@ -123,21 +125,25 @@ const UpdateTail = ({ tail }: { tail: Tail }) => {
             return;
         }
 
-        const launcherId = launcher_id_raw.map(n => n.toString(16).padStart(2, '0')).join('');
+        const launcherId = launcher_id_raw.map((n) => n.toString(16).padStart(2, '0')).join('');
 
         try {
-            const response = await axios.patch(config.ADD_TAIL_URL, {
-                hash: tail.hash,
-                name,
-                code,
-                category,
-                description,
-                launcherId,
-                eveCoinId: tail.eve_coin_id,
-                ...(website_url ? { website_url } : {}),
-                ...(twitter_url ? { twitter_url } : {}),
-                ...(discord_url ? { discord_url } : {}),
-            }, { headers: { 'x-chia-signature': signature } });
+            const response = await axios.patch(
+                config.ADD_TAIL_URL,
+                {
+                    hash: tail.hash,
+                    name,
+                    code,
+                    category,
+                    description,
+                    launcherId,
+                    eveCoinId: tail.eve_coin_id,
+                    ...(website_url ? { website_url } : {}),
+                    ...(twitter_url ? { twitter_url } : {}),
+                    ...(discord_url ? { discord_url } : {}),
+                },
+                { headers: { 'x-chia-signature': signature } }
+            );
 
             const { tx_id, error } = response.data;
 
@@ -149,7 +155,9 @@ const UpdateTail = ({ tail }: { tail: Tail }) => {
                 if (error) {
                     setFailedMessage(error);
                 } else {
-                    setFailedMessage('Failed to submit TAIL record to mempool. You can only submit the same TAIL hash once. If you recently submitted a record you must wait for it to clear before submitting another.');
+                    setFailedMessage(
+                        'Failed to submit TAIL record to mempool. You can only submit the same TAIL hash once. If you recently submitted a record you must wait for it to clear before submitting another.'
+                    );
                 }
             }
         } catch (err: any) {
@@ -161,18 +169,20 @@ const UpdateTail = ({ tail }: { tail: Tail }) => {
     return (
         <section className="section pb-lg-7 py-4 position-relative">
             <Container>
-                {inserted && (
-                    <>TAIL record submitted to mempool</>
-                )}
+                {inserted && <>TAIL record submitted to mempool</>}
                 {!inserted && (
                     <Row className="align-items-center">
-                        <Col lg={12} style={{color: 'red'}}>
-                            When you add or update details in Tail Database the update is applied to DataLayer however this website is only updated once every 10 minutes. If you use the Tail Database standalone application you can see updates quicker as that updates more frequently.
+                        <Col lg={12} style={{ color: 'red' }}>
+                            When you add or update details in Tail Database the update is applied to DataLayer however
+                            this website is only updated once every 10 minutes. If you use the Tail Database standalone
+                            application you can see updates quicker as that updates more frequently.
                         </Col>
                         <Col lg={12}>
                             <Card className="shadow-none">
                                 {failedMessage && (
-                                    <div className="alert alert-danger" role="alert">{failedMessage}</div>
+                                    <div className="alert alert-danger" role="alert">
+                                        {failedMessage}
+                                    </div>
                                 )}
                                 <Card.Body className="p-xl-5 p-0">
                                     <form onSubmit={handleSubmit(onSubmit)}>
@@ -296,7 +306,11 @@ const UpdateTail = ({ tail }: { tail: Tail }) => {
                                                     defaultValue={tail.category}
                                                 >
                                                     <option value="option_select0">Category</option>
-                                                    {CATEGORIES.map(category => (<option value={category} key={category}>{category}</option>))}
+                                                    {CATEGORIES.map((category) => (
+                                                        <option value={category} key={category}>
+                                                            {category}
+                                                        </option>
+                                                    ))}
                                                 </FormInput>
                                             </Col>
                                             <Col lg={12}>
@@ -316,7 +330,9 @@ const UpdateTail = ({ tail }: { tail: Tail }) => {
                                             <Col lg={12}>
                                                 <h4>Authorization</h4>
                                                 <p>
-                                                    To make this change you need to sign a message using the wallet which minted the CAT. The CLI command you need to execute will appear once you have populated the asset id and coin id correctly.
+                                                    To make this change you need to sign a message using the wallet
+                                                    which minted the CAT. The CLI command you need to execute will
+                                                    appear once you have populated the asset id and coin id correctly.
                                                 </p>
                                                 {signatureAddress && signatureMessage && (
                                                     <SyntaxHighlighter language="lisp" style={docco} wrapLongLines>

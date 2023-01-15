@@ -9,7 +9,6 @@ import UpdateTail from './UpdateTail';
 import { Tail } from '../Tail/types';
 import config from '../../config';
 
-
 export default () => {
     const { hash } = useParams();
     const [tail, setTail] = useState<Tail>({
@@ -25,8 +24,9 @@ export default () => {
     });
 
     useEffect(() => {
-        axios.get(`${config.GET_TAIL_URL}/${hash}`)
-            .then(response => setTail(response.data))
+        axios
+            .get(`${config.GET_TAIL_URL}/${hash}`)
+            .then((response) => setTail(response.data))
             .catch(console.error);
     }, []);
 
@@ -43,7 +43,7 @@ export default () => {
                 <Hero />
             </div>
 
-            {tail.hash && (<UpdateTail tail={tail} />)}
+            {tail.hash && <UpdateTail tail={tail} />}
             <Footer />
 
             <BackToTop />

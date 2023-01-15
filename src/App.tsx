@@ -5,8 +5,6 @@ import AOS from 'aos';
 // routes
 import Routes from './routes/Routes';
 
-
-
 // Themes
 //  For Default import Theme.scss
 import './assets/scss/theme.scss';

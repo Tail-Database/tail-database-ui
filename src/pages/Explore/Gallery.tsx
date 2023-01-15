@@ -14,12 +14,16 @@ const Gallery = ({ tails }: GalleryProps) => {
 
     const filterTails = (category: string) => {
         setCategory(category);
-        setTimeout(() => setFilteredTails(category === 'all' ? tails : tails.filter((tail) => tail.category.includes(category))), 300);
+        setTimeout(
+            () =>
+                setFilteredTails(category === 'all' ? tails : tails.filter((tail) => tail.category.includes(category))),
+            300
+        );
     };
 
     useEffect(() => {
         filterTails(category);
-    }, [tails])
+    }, [tails]);
 
     return (
         <>
@@ -109,22 +113,16 @@ const Gallery = ({ tails }: GalleryProps) => {
                             <Card className="card-portfolio-item shadow border all">
                                 <div className="p-2">
                                     <div className="card-zoom">
-                                        <Link
-                                            to={`/tail/${tail.hash}`}
-                                            className="image-popup"
-                                            title={tail.name}
-                                        >
-                                            <img
-                                                src={tail.nft_uri}
-                                                alt="galleryImage"
-                                                className="img-fluid"
-                                            />
+                                        <Link to={`/tail/${tail.hash}`} className="image-popup" title={tail.name}>
+                                            <img src={tail.nft_uri} alt="galleryImage" className="img-fluid" />
                                         </Link>
                                     </div>
                                 </div>
                                 <Card.Body className="p-2">
                                     <div className="mt-2">
-                                        <h5 className="mt-0"><Link to={`/tail/${tail.hash}`}>{tail.name}</Link></h5>
+                                        <h5 className="mt-0">
+                                            <Link to={`/tail/${tail.hash}`}>{tail.name}</Link>
+                                        </h5>
                                         <p className="text-muted mb-1">{tail.description}</p>
                                     </div>
                                 </Card.Body>

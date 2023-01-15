@@ -3,7 +3,7 @@ import Lightbox from 'react-image-lightbox';
 export type ImageType = {
     src: string;
     caption: string;
-}
+};
 
 type LightBoxProps = {
     images: ImageType[];

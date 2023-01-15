@@ -46,6 +46,7 @@
     "react-syntax-highlighter": "^15.5.0",
     "react-text-typist": "^1.0.9",
     "sass": "^1.49.10",
+    "styled-components": "^5.3.6",
     "swiper": "^7.4.1",
     "typescript": "^4.6.3",
     "web-vitals": "^2.1.0",
@@ -79,6 +80,7 @@
   "devDependencies": {
     "@types/leaflet": "^1.7.9",
     "@types/react-syntax-highlighter": "^15.5.5",
+    "@types/styled-components": "^5.1.26",
     "prettier": "2.5.1"
   }
 }

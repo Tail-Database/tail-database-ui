@@ -1,7 +1,7 @@
 import { createContext, ReactNode, useContext, useState } from "react";
-import { getLocalStorageTestnetFlag } from "../walletconnect/helpers";
+import { getLocalStorageTestnetFlag } from "../helpers";
 import { useWalletConnectClient } from "./ClientContext";
-import { DEFAULT_CHIA_METHODS } from "../walletconnect/constants";
+import { DEFAULT_CHIA_METHODS } from "../constants";
 import { useChainData } from "./ChainDataContext";
 
 

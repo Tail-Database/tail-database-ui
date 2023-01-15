@@ -14,14 +14,14 @@ interface TailDetails {
 export type SearchIndex = {
     search_index: Record<string, string[]>;
     hashes: Record<string, TailDetails>;
-}
+};
 
 type SearchIndexProps = {
     searchIndex: SearchIndex;
-}
+};
 
 const Search = ({ searchIndex }: SearchIndexProps) => {
-    const [results, setResults] = useState<(TailDetails & { hash: string; })[]>([]);
+    const [results, setResults] = useState<(TailDetails & { hash: string })[]>([]);
     const search = (event: React.ChangeEvent<HTMLInputElement>) => {
         const searchTerms = event.target.value.toLowerCase();
 
@@ -29,17 +29,15 @@ const Search = ({ searchIndex }: SearchIndexProps) => {
             searchTerms
                 .split(' ')
                 .reduce<string[]>(
-                    (accum, searchTerm) =>
-                        [...new Set([...accum, ...searchIndex.search_index[searchTerm]])],
-                        []
+                    (accum, searchTerm) => [...new Set([...accum, ...searchIndex.search_index[searchTerm]])],
+                    []
                 )
-                .map(hash => ({
+                .map((hash) => ({
                     hash,
-                    ...searchIndex.hashes[hash]
+                    ...searchIndex.hashes[hash],
                 }))
         );
     };
-
 
     return (
         <section className="hero-4 pb-5 pt-7 py-sm-7 bg-gradient2">
@@ -47,9 +45,7 @@ const Search = ({ searchIndex }: SearchIndexProps) => {
                 <Row className="justify-content-center">
                     <Col lg={7} className="text-center">
                         <h1 className="hero-title">Explore</h1>
-                        <p className="fs-17 text-muted">
-                            Search by Asset ID, Name, or Code
-                        </p>
+                        <p className="fs-17 text-muted">Search by Asset ID, Name, or Code</p>
 
                         <div className="mt-5">
                             <div className="form-control-with-hint">
@@ -71,13 +67,16 @@ const Search = ({ searchIndex }: SearchIndexProps) => {
                             <div className="mt-5">
                                 <h3>Search results</h3>
                                 <ul className="list-inline mt-3 mb-4 mb-lg-0">
-                                    {results.map(result => (
-                                        <li className="list-inline-item me-4 mb-2" key={result.hash}><Link to={`/tail/${result.hash}`}>{result.name} ({result.code})</Link></li>
+                                    {results.map((result) => (
+                                        <li className="list-inline-item me-4 mb-2" key={result.hash}>
+                                            <Link to={`/tail/${result.hash}`}>
+                                                {result.name} ({result.code})
+                                            </Link>
+                                        </li>
                                     ))}
                                 </ul>
                             </div>
                         )}
-
                     </Col>
                 </Row>
             </Container>

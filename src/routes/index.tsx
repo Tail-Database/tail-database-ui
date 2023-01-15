@@ -2,7 +2,6 @@ import React, { Suspense } from 'react';
 import { useRoutes } from 'react-router-dom';
 import Root from './Root';
 
-
 const Home = React.lazy(() => import('../pages/Home'));
 const Explore = React.lazy(() => import('../pages/Explore'));
 const Tail = React.lazy(() => import('../pages/Tail'));
@@ -45,7 +44,7 @@ const AllRoutes = () => {
                     children: [
                         {
                             path: ':hash',
-                            element: <LoadComponent component={Tail} />
+                            element: <LoadComponent component={Tail} />,
                         },
                     ],
                 },
@@ -58,11 +57,11 @@ const AllRoutes = () => {
                     children: [
                         {
                             path: ':hash',
-                            element: <LoadComponent component={UpdateTail} />
+                            element: <LoadComponent component={UpdateTail} />,
                         },
                     ],
                 },
-            ]
+            ],
         },
     ]);
 };

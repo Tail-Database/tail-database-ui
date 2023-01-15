@@ -38,9 +38,7 @@ const Footer = () => {
                 <Row className="justify-content-center">
                     <Col lg={8}>
                         <div className="text-center mt-5">
-                            <h5 className="fw-normal">
-                                {new Date().getFullYear()} © Copyright Tail Database.
-                            </h5>
+                            <h5 className="fw-normal">{new Date().getFullYear()} © Copyright Tail Database.</h5>
                             {/* <ul className="list-inline mt-4">
                                 <li className="list-inline-item mx-4 mb-3">
                                     <Link to="#" className="text-dark">

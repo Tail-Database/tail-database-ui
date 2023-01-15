@@ -16,8 +16,9 @@ const Feature2 = ({ features }: FeatureProps) => {
                     <Col lg={8}>
                         Governance of Tail Database will be migrated to a DAO once the primitive is released*
                         <p className="text=muted mt-2 fs-12">
-                                * Depends on integration between DAOs and DataLayer which may not be available at DAO release
-                            </p>
+                            * Depends on integration between DAOs and DataLayer which may not be available at DAO
+                            release
+                        </p>
                     </Col>
                 </Row>
             </Container>

@@ -91,7 +91,6 @@ const Feature1 = () => {
                                 </div>
                                 <div className="fw-medium fs-16 align-self-center flex-grow-1">
                                     Read Tail Database data directly in JSON
-
                                 </div>
                             </div>
 
@@ -112,9 +111,7 @@ const Feature1 = () => {
                                         <FeatherIcon icon="github" className="icon-dual-primary" />
                                     </span>
                                 </div>
-                                <div className="fw-medium fs-16 align-self-center flex-grow-1">
-                                    Open source
-                                </div>
+                                <div className="fw-medium fs-16 align-self-center flex-grow-1">Open source</div>
                             </div>
                         </div>
                     </Col>

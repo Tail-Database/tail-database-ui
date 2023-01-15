@@ -1,2 +1,2 @@
-export * from "./default";
-export * from "./logo";
+export * from './default';
+export * from './logo';

@@ -13,14 +13,9 @@ const Content = ({ tail }: ContentProps) => {
         <section className="position-relative">
             <Container>
                 <Row>
-                    <Col lg={12} style={{textAlign: 'center'}}>
+                    <Col lg={12} style={{ textAlign: 'center' }}>
                         <figure className="figure">
-                            <img
-                                src={tail.nft_uri}
-                                alt="contentImage"
-                                className="figure-img rounded"
-                                height="350"
-                            />
+                            <img src={tail.nft_uri} alt="contentImage" className="figure-img rounded" height="350" />
                         </figure>
                     </Col>
                 </Row>
@@ -29,9 +24,7 @@ const Content = ({ tail }: ContentProps) => {
                     <Col lg={6}>
                         <div className="pe-4">
                             <h3>Description</h3>
-                            <p>
-                                {tail.description}
-                            </p>
+                            <p>{tail.description}</p>
                         </div>
                     </Col>
                     <Col lg={6}>
@@ -39,7 +32,7 @@ const Content = ({ tail }: ContentProps) => {
                             <h3>TAIL reveal</h3>
                             <p>
                                 <SyntaxHighlighter language="lisp" style={docco} wrapLongLines>
-                                {tail.tail_reveal}
+                                    {tail.tail_reveal}
                                 </SyntaxHighlighter>
                             </p>
                         </div>

@@ -3,4 +3,4 @@ export type MenuItem = {
     label: string;
     url?: string;
     children?: MenuItem[];
-}
+};

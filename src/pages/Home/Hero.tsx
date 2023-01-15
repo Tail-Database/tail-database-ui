@@ -11,8 +11,8 @@ const Hero8 = () => {
                 <Row className="align-items-center text-center text-sm-start">
                     <Col lg={6}>
                         <h1 className="hero-title">
-                            <span className="highlight highlight-warning d-inline-block">Decentralized</span>{' '}
-                            asset token database
+                            <span className="highlight highlight-warning d-inline-block">Decentralized</span> asset
+                            token database
                         </h1>
                         <p className="fs-16 mt-3 text-muted">
                             Powered by DataLayer, Tail Database provides asset token metadata with no central authority.

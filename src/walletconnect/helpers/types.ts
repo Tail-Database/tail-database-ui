@@ -1,4 +1,4 @@
-import { ChainsMap } from "caip-api";
+import { ChainsMap } from 'caip-api';
 
 export interface AssetData {
     symbol: string;

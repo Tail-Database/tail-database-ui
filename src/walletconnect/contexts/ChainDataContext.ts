@@ -6,8 +6,8 @@ import {
     useEffect,
     useState,
 } from "react";
-import { ChiaChainData } from "../walletconnect/chains/chia";
-import { ChainNamespaces, getAllChainNamespaces } from "../walletconnect/helpers";
+import { ChiaChainData } from "../chains/chia";
+import { ChainNamespaces, getAllChainNamespaces } from "../helpers";
 
 /**
  * Types
