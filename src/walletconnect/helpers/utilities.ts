@@ -1,5 +1,5 @@
 export const LOCALSTORAGE_KEY_TESTNET = 'TESTNET';
-export const INITIAL_STATE_TESTNET_DEFAULT = true;
+export const INITIAL_STATE_TESTNET_DEFAULT = false;
 
 export function ellipseAddress(address = '', width = 10): string {
     return `${address.slice(0, width)}...${address.slice(-width)}`;

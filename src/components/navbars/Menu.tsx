@@ -79,6 +79,7 @@ const Menu = ({ navClass, buttonClass, showDownload, loggedInUser }: MenuProps) 
         if (typeof client === "undefined") {
           throw new Error("WalletConnect is not initialized");
         }
+        console.log('onConnect pairings', pairings)
         // Suggest existing pairings (if any).
         if (pairings.length) {
           openPairingModal();
@@ -105,16 +106,14 @@ const Menu = ({ navClass, buttonClass, showDownload, loggedInUser }: MenuProps) 
 
     const renderContent = () => {
         const chainOptions = isTestnet ? DEFAULT_TEST_CHAINS : DEFAULT_MAIN_CHAINS;
+        console.log('chains', chains)
         return !accounts.length ? (
             <SLanding center>
                 {/* <Banner />
                 <h6>{`Using v${version || "2.0.0-beta"}`}</h6> */}
                 <SButtonContainer>
                     <h6>Select chains:</h6>
-                    <SToggleContainer>
-                        <p>Testnets Only?</p>
-                        <Toggle active={isTestnet} onClick={toggleTestnets} />
-                    </SToggleContainer>
+                    
                     {chainOptions.map((chainId) => (
                         <Blockchain
                             key={chainId}
@@ -127,6 +126,10 @@ const Menu = ({ navClass, buttonClass, showDownload, loggedInUser }: MenuProps) 
                     <SConnectButton left onClick={onConnect} disabled={!chains.length}>
                         {"Connect"}
                     </SConnectButton>
+                    <SToggleContainer>
+                        <p>Testnets Only?</p>
+                        <Toggle active={isTestnet} onClick={toggleTestnets} />
+                    </SToggleContainer>
                 </SButtonContainer>
             </SLanding>
         ) : null;

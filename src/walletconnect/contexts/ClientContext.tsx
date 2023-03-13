@@ -54,6 +54,7 @@ export function ClientContextProvider({ children }: { children: ReactNode | Reac
     };
 
     const onSessionConnected = useCallback(async (_session: SessionTypes.Struct) => {
+        console.log('in onSessionConnected')
         const allNamespaceAccounts = Object.values(_session.namespaces)
             .map((namespace) => namespace.accounts)
             .flat();
@@ -66,6 +67,7 @@ export function ClientContextProvider({ children }: { children: ReactNode | Reac
 
     const connect = useCallback(
         async (pairing: any) => {
+            console.log('in connect')
             if (typeof client === 'undefined') {
                 throw new Error('WalletConnect is not initialized');
             }
@@ -119,6 +121,7 @@ export function ClientContextProvider({ children }: { children: ReactNode | Reac
 
     const _subscribeToEvents = useCallback(
         async (_client: Client) => {
+            console.log('subbing to events')
             if (typeof _client === 'undefined') {
                 throw new Error('WalletConnect is not initialized');
             }
@@ -155,6 +158,9 @@ export function ClientContextProvider({ children }: { children: ReactNode | Reac
             // populates existing pairings to state
             setPairings(_client.pairing.getAll({ active: true }));
             console.log('RESTORED PAIRINGS: ', _client.pairing.getAll({ active: true }));
+
+            console.log('sess', session)
+            console.log('_client.session.length', _client.session.length)
 
             if (typeof session !== 'undefined') return;
             // populates (the last) existing session to state
@@ -195,6 +201,7 @@ export function ClientContextProvider({ children }: { children: ReactNode | Reac
 
     useEffect(() => {
         if (!client || prevRelayerValue.current !== relayerRegion) {
+            console.log('here1')
             createClient();
         }
     }, [client, createClient, relayerRegion]);
