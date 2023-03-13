@@ -282,18 +282,18 @@ export function JsonRpcContextProvider({
 
     return (
         <JsonRpcContext.Provider
-      value= {{
-        ping,
-        chiaRpc,
-        rpcResult: result,
-        isRpcRequestPending: pending,
-        isTestnet,
-        setIsTestnet,
-      }}
-    >
-    { children }
-    < /JsonRpcContext.Provider>
-  );
+            value={{
+                ping,
+                chiaRpc,
+                rpcResult: result,
+                isRpcRequestPending: pending,
+                isTestnet,
+                setIsTestnet,
+            }}
+        >
+            {children}
+        </JsonRpcContext.Provider>
+    );
 }
 
 export function useJsonRpc() {

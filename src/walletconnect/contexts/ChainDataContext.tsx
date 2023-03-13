@@ -61,14 +61,14 @@ export function ChainDataContextProvider({
 
     return (
         <ChainDataContext.Provider
-      value= {{
-        chainData,
-      }
-}
-    >
-    { children }
-    < /ChainDataContext.Provider>
-  );
+            value={{
+                chainData,
+            }
+            }
+        >
+            {children}
+        </ChainDataContext.Provider>
+    );
 }
 
 export function useChainData() {

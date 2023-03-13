@@ -3,7 +3,7 @@ import styled from 'styled-components';
 
 import Icon from './Icon';
 
-import { AssetData, fromWad } from '../helpers';
+import { AssetData } from '../helpers';
 
 import { getChainMetadata } from '../chains';
 
@@ -63,7 +63,7 @@ const Asset = (props: AssetProps) => {
                 <SAssetName>{asset.name}</SAssetName>
             </SAssetLeft>
             <SAssetRight>
-                <SAssetBalance>{`${fromWad(asset.balance || '0')} ${asset.symbol}`}</SAssetBalance>
+                <SAssetBalance>{asset.balance || '0'}</SAssetBalance>
             </SAssetRight>
         </SAsset>
     );
