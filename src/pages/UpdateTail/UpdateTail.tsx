@@ -10,9 +10,9 @@ import FeatherIcon from 'feather-icons-react';
 import { convertbits, decode, encode } from 'chia/bech32';
 import config from 'config';
 import { Tail } from '../Tail/types';
-
-// components
+import { useJsonRpc } from 'walletconnect/contexts/JsonRpcContext';
 import { FormInput } from 'components/form';
+import { useWalletConnectClient } from 'walletconnect/contexts/ClientContext';
 
 const CATEGORIES = ['gaming', 'event', 'education', 'meme', 'stablecoin', 'wrapped', 'platform'];
 
@@ -21,6 +21,9 @@ const UpdateTail = ({ tail }: { tail: Tail }) => {
     const [failedMessage, setFailedMessage] = useState('');
     const [signatureAddress, setSignatureAddress] = useState('');
     const [signatureMessage, setSignatureMessage] = useState('');
+
+    const { accounts } = useWalletConnectClient();
+    const { chiaRpc, rpcResult, isTestnet, setIsTestnet } = useJsonRpc();
 
     const hexToBytes = (hex: string): number[] => {
         for (var bytes = [], c = 0; c < hex.length; c += 2) {
@@ -107,6 +110,37 @@ const UpdateTail = ({ tail }: { tail: Tail }) => {
         discord_url,
         signature,
     }) => {
+        const account = accounts[0];
+        const [namespace, reference, fingerprint] = account.split(":");
+        const chainId = `${namespace}:${reference}`;
+
+        let result = null;
+
+        try {
+            await chiaRpc.signMessageByAddress(chainId, fingerprint, signatureMessage, signatureAddress);
+        } catch (err) {
+            console.log(err);
+
+            setInserted(false);
+            setFailedMessage('Failed to sign message');
+
+            return;
+        }
+
+        console.log('we have the result now', rpcResult)
+
+        if (!rpcResult) {
+            setInserted(false);
+            setFailedMessage('Failed to sign message');
+
+            return;
+        }
+
+        console.log('SUCCESSFUL SIGN ', result)
+
+        // TODO: 3, refactor this to put sign after validation
+
+
         const decode_result = decode(logo, 'bech32m');
 
         if (!decode_result) {

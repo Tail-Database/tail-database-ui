@@ -42,17 +42,12 @@ const Menu = ({ navClass, buttonClass, showDownload, loggedInUser }: MenuProps) 
         setRelayerRegion
     } = useWalletConnectClient();
 
-    console.log('acc', accounts)
     const { chiaRpc, isTestnet, setIsTestnet } = useJsonRpc();
     const { chainData } = useChainData();
-
-    console.log('chainData222', chainData)
 
     const getChiaActions = (): AccountAction[] => {
         const onSignMessageByAddress = async (chainId: string, fingerprint: string) => {
             // openRequestModal();
-            console.log('chainId', chainId)
-            console.log('fingerprint', fingerprint)
             await chiaRpc.signMessageByAddress(chainId, fingerprint, 'test message 123', 'txch1l8pwa9v3kphxr50vtgpc0dz2atvemryxzlngav9xnraxm39cxt2sxvpe3m');
           };
 
@@ -108,7 +103,7 @@ const Menu = ({ navClass, buttonClass, showDownload, loggedInUser }: MenuProps) 
 
     const renderContent = () => {
         const chainOptions = isTestnet ? DEFAULT_TEST_CHAINS : DEFAULT_MAIN_CHAINS;
-        console.log('chains', chains)
+
         return !accounts.length ? (
             <SLanding center>
                 {/* <Banner />
@@ -169,7 +164,7 @@ const Menu = ({ navClass, buttonClass, showDownload, loggedInUser }: MenuProps) 
                 </a>
             </Nav.Item>
             <SContent>{isInitializing ? "Loading..." : renderContent()}</SContent>
-            {(accounts || ['chia:mainnet:2028126270']).map((account) => {
+            {accounts.map((account) => {
                 const [namespace, reference, address] = account.split(":");
                 const chainId = `${namespace}:${reference}`;
                 console.log('account', account)

@@ -51,7 +51,7 @@ export function JsonRpcContextProvider({
     const [result, setResult] = useState<IFormattedRpcResponse | null>();
     const [isTestnet, setIsTestnet] = useState(getLocalStorageTestnetFlag());
 
-    const { client, session, accounts } =
+    const { client, session } =
         useWalletConnectClient();
 
     const { chainData } = useChainData();
@@ -209,11 +209,6 @@ export function JsonRpcContextProvider({
                 message?: string,
                 address?: string,
             ): Promise<IFormattedRpcResponse> => {
-                console.log('calling sign', {
-                    fingerprint,
-                    message,
-                    address,
-                })
                 const method = DEFAULT_CHIA_METHODS.CHIA_SIGN_MESSAGE_BY_ADDRESS;
                 const result = await client!.request({
                     topic: session!.topic,
