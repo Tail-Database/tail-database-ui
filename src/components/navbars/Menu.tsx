@@ -49,15 +49,17 @@ const Menu = ({ navClass, buttonClass, showDownload, loggedInUser }: MenuProps) 
     console.log('chainData222', chainData)
 
     const getChiaActions = (): AccountAction[] => {
-        const onLogIn = async (chainId: string, address: string) => {
-            //   openRequestModal();
-            await chiaRpc.testLogIn(chainId, address);
-        };
+        const onSignMessageByAddress = async (chainId: string, fingerprint: string) => {
+            // openRequestModal();
+            console.log('chainId', chainId)
+            console.log('fingerprint', fingerprint)
+            await chiaRpc.signMessageByAddress(chainId, fingerprint, 'test message 123', 'txch1l8pwa9v3kphxr50vtgpc0dz2atvemryxzlngav9xnraxm39cxt2sxvpe3m');
+          };
 
         return [
             {
-                method: DEFAULT_CHIA_METHODS.CHIA_LOG_IN,
-                callback: onLogIn,
+                method: DEFAULT_CHIA_METHODS.CHIA_SIGN_MESSAGE_BY_ADDRESS,
+                callback: onSignMessageByAddress,
             },
         ];
     };

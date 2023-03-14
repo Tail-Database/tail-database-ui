@@ -16,6 +16,7 @@ interface IFormattedRpcResponse {
 }
 
 type TRpcRequestCallback = (chainId: string, address: string) => Promise<void>;
+type TSignRpcRequestCallback = (chainId: string, fingerprint: string, message: string, address: string) => Promise<void>;
 
 interface IContext {
     ping: () => Promise<void>;
@@ -23,7 +24,7 @@ interface IContext {
         testSendTransaction: TRpcRequestCallback,
         testNewAddress: TRpcRequestCallback,
         testLogIn: TRpcRequestCallback,
-        testSignMessageByAddress: TRpcRequestCallback,
+        signMessageByAddress: TSignRpcRequestCallback,
         testSignMessageById: TRpcRequestCallback,
         testGetWalletSyncStatus: TRpcRequestCallback,
     },
@@ -59,10 +60,12 @@ export function JsonRpcContextProvider({
         (
             rpcRequest: (
                 chainId: string,
-                address: string
+                fingerprint: string,
+                message?: string,
+                address?: string,
             ) => Promise<IFormattedRpcResponse>
         ) =>
-            async (chainId: string, address: string) => {
+            async (chainId: string, fingerprint: string, message?: string, address?: string) => {
                 if (typeof client === "undefined") {
                     throw new Error("WalletConnect is not initialized");
                 }
@@ -72,12 +75,12 @@ export function JsonRpcContextProvider({
 
                 try {
                     setPending(true);
-                    const result = await rpcRequest(chainId, address);
+                    const result = await rpcRequest(chainId, fingerprint, message, address);
                     setResult(result);
                 } catch (err: any) {
                     console.error("RPC request failed: ", err);
                     setResult({
-                        address,
+                        address: fingerprint,
                         valid: false,
                         result: err?.message ?? err,
                     });
@@ -199,11 +202,18 @@ export function JsonRpcContextProvider({
                 };
             }
         ),
-        testSignMessageByAddress: _createJsonRpcRequestHandler(
+        signMessageByAddress: _createJsonRpcRequestHandler(
             async (
                 chainId: string,
-                address: string
+                fingerprint: string,
+                message?: string,
+                address?: string,
             ): Promise<IFormattedRpcResponse> => {
+                console.log('calling sign', {
+                    fingerprint,
+                    message,
+                    address,
+                })
                 const method = DEFAULT_CHIA_METHODS.CHIA_SIGN_MESSAGE_BY_ADDRESS;
                 const result = await client!.request({
                     topic: session!.topic,
@@ -211,16 +221,16 @@ export function JsonRpcContextProvider({
                     request: {
                         method,
                         params: {
-                            fingerprint: address,
-                            message: 'This is a testsign in message by address',
-                            address: 'txch1l8pwa9v3kphxr50vtgpc0dz2atvemryxzlngav9xnraxm39cxt2sxvpe3m',
+                            fingerprint,
+                            message,
+                            address,
                         },
                     },
                 });
 
                 return {
                     method,
-                    address,
+                    address: fingerprint,
                     valid: true,
                     result: JSON.stringify(result),
                 };

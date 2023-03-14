@@ -210,9 +210,9 @@ const AddTail = () => {
             await chiaRpc.testLogIn(chainId, address);
         };
 
-        const onSignMessageByAddress = async (chainId: string, address: string) => {
+        const onSignMessageByAddress = async (chainId: string, fingerprint: string) => {
             openRequestModal();
-            await chiaRpc.testSignMessageByAddress(chainId, address);
+            await chiaRpc.signMessageByAddress(chainId, fingerprint, 'xx', 'txch1l8pwa9v3kphxr50vtgpc0dz2atvemryxzlngav9xnraxm39cxt2sxvpe3m');
         };
 
         const onSignMessageById = async (chainId: string, address: string) => {
