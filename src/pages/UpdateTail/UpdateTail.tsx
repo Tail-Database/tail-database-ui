@@ -21,6 +21,8 @@ const UpdateTail = ({ tail }: { tail: Tail }) => {
     const [failedMessage, setFailedMessage] = useState('');
     const [signatureAddress, setSignatureAddress] = useState('');
     const [signatureMessage, setSignatureMessage] = useState('');
+    const [signed, setSigned] = useState(false);
+    const [formData, setFormData] = useState<any>(false);
 
     const { accounts } = useWalletConnectClient();
     const { chiaRpc, rpcResult, isTestnet, setIsTestnet } = useJsonRpc();
@@ -99,6 +101,56 @@ const UpdateTail = ({ tail }: { tail: Tail }) => {
         formState: { errors },
     } = methods;
 
+    useEffect(() => {
+        if (signed) {
+            const valid = (rpcResult as any).valid;
+
+            if (valid && formData) {
+                setFailedMessage('');
+
+                const { data: { signature } } = JSON.parse((rpcResult as any).result);
+
+                (async () => {
+                    try {
+                        const response = await axios.patch(
+                            config.ADD_TAIL_URL,
+                            formData,
+                            { headers: { 'x-chia-signature': signature } }
+                        );
+
+                        const { tx_id, error } = response.data;
+
+                        if (tx_id) {
+                            setInserted(true);
+                            setFailedMessage('');
+                        } else {
+                            setInserted(false);
+                            if (error) {
+                                setFailedMessage(error);
+                            } else {
+                                setFailedMessage(
+                                    'Failed to submit TAIL record to mempool. You can only submit the same TAIL hash once. If you recently submitted a record you must wait for it to clear before submitting another.'
+                                );
+                            }
+                        }
+                    } catch (err: any) {
+                        console.error(err);
+                        setFailedMessage(err);
+                    }
+                })();
+
+
+            } else if (!valid && !formData) {
+                setInserted(false);
+                setFailedMessage('Failed to sign message');
+            } else {
+                setInserted(false);
+                setFailedMessage('Failed to sign message');
+            }
+
+        }
+    }, [signed, formData]);
+
     const onSubmit: SubmitHandler<FieldValues> = async ({
         name,
         code,
@@ -108,38 +160,11 @@ const UpdateTail = ({ tail }: { tail: Tail }) => {
         website_url,
         twitter_url,
         discord_url,
-        signature,
     }) => {
-        const account = accounts[0];
-        const [namespace, reference, fingerprint] = account.split(":");
-        const chainId = `${namespace}:${reference}`;
-
-        let result = null;
-
-        try {
-            await chiaRpc.signMessageByAddress(chainId, fingerprint, signatureMessage, signatureAddress);
-        } catch (err) {
-            console.log(err);
-
-            setInserted(false);
-            setFailedMessage('Failed to sign message');
-
-            return;
-        }
-
-        console.log('we have the result now', rpcResult)
-
-        if (!rpcResult) {
-            setInserted(false);
-            setFailedMessage('Failed to sign message');
-
-            return;
-        }
-
-        console.log('SUCCESSFUL SIGN ', result)
-
-        // TODO: 3, refactor this to put sign after validation
-
+        setFormData(false);
+        setInserted(false);
+        setFailedMessage('');
+        setSigned(false);
 
         const decode_result = decode(logo, 'bech32m');
 
@@ -161,43 +186,35 @@ const UpdateTail = ({ tail }: { tail: Tail }) => {
 
         const launcherId = launcher_id_raw.map((n) => n.toString(16).padStart(2, '0')).join('');
 
+        const account = accounts[0];
+        const [namespace, reference, fingerprint] = account.split(":");
+        const chainId = `${namespace}:${reference}`;
+
         try {
-            const response = await axios.patch(
-                config.ADD_TAIL_URL,
-                {
-                    hash: tail.hash,
-                    name,
-                    code,
-                    category,
-                    description,
-                    launcherId,
-                    eveCoinId: tail.eve_coin_id,
-                    ...(website_url ? { website_url } : {}),
-                    ...(twitter_url ? { twitter_url } : {}),
-                    ...(discord_url ? { discord_url } : {}),
-                },
-                { headers: { 'x-chia-signature': signature } }
-            );
+            await chiaRpc.signMessageByAddress(chainId, fingerprint, signatureMessage, signatureAddress);
+        } catch (err) {
+            console.log(err);
 
-            const { tx_id, error } = response.data;
+            setSigned(false);
+            setInserted(false);
+            setFailedMessage('Failed to sign message');
 
-            if (tx_id) {
-                setInserted(true);
-                setFailedMessage('');
-            } else {
-                setInserted(false);
-                if (error) {
-                    setFailedMessage(error);
-                } else {
-                    setFailedMessage(
-                        'Failed to submit TAIL record to mempool. You can only submit the same TAIL hash once. If you recently submitted a record you must wait for it to clear before submitting another.'
-                    );
-                }
-            }
-        } catch (err: any) {
-            console.error(err);
-            setFailedMessage(err);
+            return;
         }
+
+        setSigned(true);
+        setFormData({
+            hash: tail.hash,
+            name,
+            code,
+            category,
+            description,
+            launcherId,
+            eveCoinId: tail.eve_coin_id,
+            ...(website_url ? { website_url } : {}),
+            ...(twitter_url ? { twitter_url } : {}),
+            ...(discord_url ? { discord_url } : {}),
+        });
     };
 
     return (
@@ -365,29 +382,11 @@ const UpdateTail = ({ tail }: { tail: Tail }) => {
                                                 <h4>Authorization</h4>
                                                 <p>
                                                     To make this change you need to sign a message using the wallet
-                                                    which minted the CAT. The CLI command you need to execute will
-                                                    appear once you have populated the asset id and coin id correctly.
+                                                    which minted the CAT. You should run a chia wallet that uses the correct keys
+                                                    and we will connect with WalletConnect to sign the message. Manually inspect
+                                                    the message that is being signed to be confirm it's not a malicious transaction.
                                                 </p>
-                                                {signatureAddress && signatureMessage && (
-                                                    <SyntaxHighlighter language="lisp" style={docco} wrapLongLines>
-                                                        {`chia wallet sign_message -a ${signatureAddress} -m ${signatureMessage}`}
-                                                    </SyntaxHighlighter>
-                                                )}
                                             </Col>
-                                            {signatureAddress && signatureMessage && (
-                                                <Col lg={12}>
-                                                    <FormInput
-                                                        type="signature"
-                                                        name="signature"
-                                                        label="Signature"
-                                                        placeholder="Signature"
-                                                        containerClass={'mb-3'}
-                                                        register={register}
-                                                        errors={errors}
-                                                        control={control}
-                                                    />
-                                                </Col>
-                                            )}
                                             <Col lg="auto" className="mb-0">
                                                 <Button type="submit" disabled={!signatureAddress || !signatureMessage}>
                                                     Add
