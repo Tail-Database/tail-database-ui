@@ -23,6 +23,7 @@ const UpdateTail = ({ tail }: { tail: Tail }) => {
     const [signatureMessage, setSignatureMessage] = useState('');
     const [signed, setSigned] = useState(false);
     const [formData, setFormData] = useState<any>(false);
+    const [modal, setModal] = useState('');
 
     const { accounts } = useWalletConnectClient();
     const { chiaRpc, rpcResult, isTestnet, setIsTestnet } = useJsonRpc();
@@ -190,6 +191,8 @@ const UpdateTail = ({ tail }: { tail: Tail }) => {
         const [namespace, reference, fingerprint] = account.split(":");
         const chainId = `${namespace}:${reference}`;
 
+        setModal('request');
+
         try {
             await chiaRpc.signMessageByAddress(chainId, fingerprint, signatureMessage, signatureAddress);
         } catch (err) {
@@ -200,6 +203,8 @@ const UpdateTail = ({ tail }: { tail: Tail }) => {
             setFailedMessage('Failed to sign message');
 
             return;
+        } finally {
+            setModal('');
         }
 
         setSigned(true);
@@ -220,188 +225,201 @@ const UpdateTail = ({ tail }: { tail: Tail }) => {
     return (
         <section className="section pb-lg-7 py-4 position-relative">
             <Container>
-                {inserted && <>TAIL record submitted to mempool</>}
-                {!inserted && (
-                    <Row className="align-items-center">
-                        <Col lg={12} style={{ color: 'red' }}>
-                            When you add or update details in Tail Database the update is applied to DataLayer however
-                            this website is only updated once every 10 minutes. If you use the Tail Database standalone
-                            application you can see updates quicker as that updates more frequently.
-                        </Col>
-                        <Col lg={12}>
-                            <Card className="shadow-none">
-                                {failedMessage && (
-                                    <div className="alert alert-danger" role="alert">
-                                        {failedMessage}
-                                    </div>
-                                )}
-                                <Card.Body className="p-xl-5 p-0">
-                                    <form onSubmit={handleSubmit(onSubmit)}>
-                                        <Row>
-                                            <Col lg={12}>
-                                                <FormInput
-                                                    type="hash"
-                                                    name="hash"
-                                                    label="Asset ID"
-                                                    placeholder="Asset ID"
-                                                    containerClass={'mb-3'}
-                                                    register={register}
-                                                    errors={errors}
-                                                    control={control}
-                                                    defaultValue={tail.hash}
-                                                    disabled
-                                                />
-                                            </Col>
-                                            <Col lg={12}>
-                                                <FormInput
-                                                    type="name"
-                                                    name="name"
-                                                    label="Name"
-                                                    placeholder="Name"
-                                                    containerClass={'mb-3'}
-                                                    register={register}
-                                                    errors={errors}
-                                                    control={control}
-                                                    defaultValue={tail.name}
-                                                />
-                                            </Col>
-                                            <Col lg={12}>
-                                                <FormInput
-                                                    type="code"
-                                                    name="code"
-                                                    label="Code"
-                                                    placeholder="Code"
-                                                    containerClass={'mb-3'}
-                                                    register={register}
-                                                    errors={errors}
-                                                    control={control}
-                                                    defaultValue={tail.code}
-                                                />
-                                            </Col>
-                                            <Col lg={12}>
-                                                <FormInput
-                                                    type="logo"
-                                                    name="logo"
-                                                    label="Logo NFT ID"
-                                                    placeholder="Logo NFT ID"
-                                                    containerClass={'mb-3'}
-                                                    register={register}
-                                                    errors={errors}
-                                                    control={control}
-                                                    defaultValue={nftId(tail.launcher_id)}
-                                                />
-                                            </Col>
-                                            <Col lg={12}>
-                                                <FormInput
-                                                    type="coin"
-                                                    name="coin"
-                                                    label="CAT Coin ID"
-                                                    placeholder="CAT Coin ID"
-                                                    containerClass={'mb-3'}
-                                                    register={register}
-                                                    errors={errors}
-                                                    control={control}
-                                                    defaultValue={tail.eve_coin_id}
-                                                    disabled
-                                                />
-                                            </Col>
-                                            <Col lg={12}>
-                                                <FormInput
-                                                    type="website_url"
-                                                    name="website_url"
-                                                    label="Website URL"
-                                                    placeholder="Website URL"
-                                                    containerClass={'mb-3'}
-                                                    register={register}
-                                                    errors={errors}
-                                                    control={control}
-                                                    defaultValue={tail.website_url}
-                                                />
-                                            </Col>
-                                            <Col lg={12}>
-                                                <FormInput
-                                                    type="twitter_url"
-                                                    name="twitter_url"
-                                                    label="Twitter URL"
-                                                    placeholder="Twitter URL"
-                                                    containerClass={'mb-3'}
-                                                    register={register}
-                                                    errors={errors}
-                                                    control={control}
-                                                    defaultValue={tail.twitter_url}
-                                                />
-                                            </Col>
-                                            <Col lg={12}>
-                                                <FormInput
-                                                    type="discord_url"
-                                                    name="discord_url"
-                                                    label="Discord URL"
-                                                    placeholder="Discord URL"
-                                                    containerClass={'mb-3'}
-                                                    register={register}
-                                                    errors={errors}
-                                                    control={control}
-                                                    defaultValue={tail.discord_url}
-                                                />
-                                            </Col>
-                                            <Col lg={12}>
-                                                <FormInput
-                                                    type="select"
-                                                    name="category"
-                                                    label="Category"
-                                                    placeholder="Category"
-                                                    containerClass={'mb-3'}
-                                                    register={register}
-                                                    errors={errors}
-                                                    control={control}
-                                                    defaultValue={tail.category}
-                                                >
-                                                    <option value="option_select0">Category</option>
-                                                    {CATEGORIES.map((category) => (
-                                                        <option value={category} key={category}>
-                                                            {category}
-                                                        </option>
-                                                    ))}
-                                                </FormInput>
-                                            </Col>
-                                            <Col lg={12}>
-                                                <FormInput
-                                                    type="textarea"
-                                                    name="description"
-                                                    label="Description"
-                                                    placeholder="Type Your description..."
-                                                    rows={5}
-                                                    containerClass={'mb-3'}
-                                                    register={register}
-                                                    errors={errors}
-                                                    control={control}
-                                                    defaultValue={tail.description}
-                                                />
-                                            </Col>
-                                            <Col lg={12}>
-                                                <h4>Authorization</h4>
-                                                <p>
-                                                    To make this change you need to sign a message using the wallet
-                                                    which minted the CAT. You should run a chia wallet that uses the correct keys
-                                                    and we will connect with WalletConnect to sign the message. Manually inspect
-                                                    the message that is being signed to be confirm it's not a malicious transaction.
-                                                </p>
-                                            </Col>
-                                            <Col lg="auto" className="mb-0">
-                                                <Button type="submit" disabled={!signatureAddress || !signatureMessage}>
-                                                    Add
-                                                    <span className="icon icon-xs text-white ms-1">
-                                                        <FeatherIcon icon="plus-circle" />
-                                                    </span>
-                                                </Button>
-                                            </Col>
-                                        </Row>
-                                    </form>
-                                </Card.Body>
-                            </Card>
-                        </Col>
-                    </Row>
+                {modal == 'request' && (
+                    <>
+                        <h3>Pending JSON-RPC Request</h3>
+                        <p>
+                            Approve or reject request using your wallet
+                        </p>
+                    </>
                 )}
+                {modal == '' && (
+                    <>
+                        {inserted && <>TAIL record submitted to mempool</>}
+                        {!inserted && (
+                            <Row className="align-items-center">
+                                <Col lg={12} style={{ color: 'red' }}>
+                                    When you add or update details in Tail Database the update is applied to DataLayer however
+                                    this website is only updated once every 10 minutes. If you use the Tail Database standalone
+                                    application you can see updates quicker as that updates more frequently.
+                                </Col>
+                                <Col lg={12}>
+                                    <Card className="shadow-none">
+                                        {failedMessage && (
+                                            <div className="alert alert-danger" role="alert">
+                                                {failedMessage}
+                                            </div>
+                                        )}
+                                        <Card.Body className="p-xl-5 p-0">
+                                            <form onSubmit={handleSubmit(onSubmit)}>
+                                                <Row>
+                                                    <Col lg={12}>
+                                                        <FormInput
+                                                            type="hash"
+                                                            name="hash"
+                                                            label="Asset ID"
+                                                            placeholder="Asset ID"
+                                                            containerClass={'mb-3'}
+                                                            register={register}
+                                                            errors={errors}
+                                                            control={control}
+                                                            defaultValue={tail.hash}
+                                                            disabled
+                                                        />
+                                                    </Col>
+                                                    <Col lg={12}>
+                                                        <FormInput
+                                                            type="name"
+                                                            name="name"
+                                                            label="Name"
+                                                            placeholder="Name"
+                                                            containerClass={'mb-3'}
+                                                            register={register}
+                                                            errors={errors}
+                                                            control={control}
+                                                            defaultValue={tail.name}
+                                                        />
+                                                    </Col>
+                                                    <Col lg={12}>
+                                                        <FormInput
+                                                            type="code"
+                                                            name="code"
+                                                            label="Code"
+                                                            placeholder="Code"
+                                                            containerClass={'mb-3'}
+                                                            register={register}
+                                                            errors={errors}
+                                                            control={control}
+                                                            defaultValue={tail.code}
+                                                        />
+                                                    </Col>
+                                                    <Col lg={12}>
+                                                        <FormInput
+                                                            type="logo"
+                                                            name="logo"
+                                                            label="Logo NFT ID"
+                                                            placeholder="Logo NFT ID"
+                                                            containerClass={'mb-3'}
+                                                            register={register}
+                                                            errors={errors}
+                                                            control={control}
+                                                            defaultValue={nftId(tail.launcher_id)}
+                                                        />
+                                                    </Col>
+                                                    <Col lg={12}>
+                                                        <FormInput
+                                                            type="coin"
+                                                            name="coin"
+                                                            label="CAT Coin ID"
+                                                            placeholder="CAT Coin ID"
+                                                            containerClass={'mb-3'}
+                                                            register={register}
+                                                            errors={errors}
+                                                            control={control}
+                                                            defaultValue={tail.eve_coin_id}
+                                                            disabled
+                                                        />
+                                                    </Col>
+                                                    <Col lg={12}>
+                                                        <FormInput
+                                                            type="website_url"
+                                                            name="website_url"
+                                                            label="Website URL"
+                                                            placeholder="Website URL"
+                                                            containerClass={'mb-3'}
+                                                            register={register}
+                                                            errors={errors}
+                                                            control={control}
+                                                            defaultValue={tail.website_url}
+                                                        />
+                                                    </Col>
+                                                    <Col lg={12}>
+                                                        <FormInput
+                                                            type="twitter_url"
+                                                            name="twitter_url"
+                                                            label="Twitter URL"
+                                                            placeholder="Twitter URL"
+                                                            containerClass={'mb-3'}
+                                                            register={register}
+                                                            errors={errors}
+                                                            control={control}
+                                                            defaultValue={tail.twitter_url}
+                                                        />
+                                                    </Col>
+                                                    <Col lg={12}>
+                                                        <FormInput
+                                                            type="discord_url"
+                                                            name="discord_url"
+                                                            label="Discord URL"
+                                                            placeholder="Discord URL"
+                                                            containerClass={'mb-3'}
+                                                            register={register}
+                                                            errors={errors}
+                                                            control={control}
+                                                            defaultValue={tail.discord_url}
+                                                        />
+                                                    </Col>
+                                                    <Col lg={12}>
+                                                        <FormInput
+                                                            type="select"
+                                                            name="category"
+                                                            label="Category"
+                                                            placeholder="Category"
+                                                            containerClass={'mb-3'}
+                                                            register={register}
+                                                            errors={errors}
+                                                            control={control}
+                                                            defaultValue={tail.category}
+                                                        >
+                                                            <option value="option_select0">Category</option>
+                                                            {CATEGORIES.map((category) => (
+                                                                <option value={category} key={category}>
+                                                                    {category}
+                                                                </option>
+                                                            ))}
+                                                        </FormInput>
+                                                    </Col>
+                                                    <Col lg={12}>
+                                                        <FormInput
+                                                            type="textarea"
+                                                            name="description"
+                                                            label="Description"
+                                                            placeholder="Type Your description..."
+                                                            rows={5}
+                                                            containerClass={'mb-3'}
+                                                            register={register}
+                                                            errors={errors}
+                                                            control={control}
+                                                            defaultValue={tail.description}
+                                                        />
+                                                    </Col>
+                                                    <Col lg={12}>
+                                                        <h4>Authorization</h4>
+                                                        <p>
+                                                            To make this change you need to sign a message using the wallet
+                                                            which minted the CAT. You should run a chia wallet that uses the correct keys
+                                                            and we will connect with WalletConnect to sign the message. Manually inspect
+                                                            the message that is being signed to be confirm it's not a malicious transaction.
+                                                        </p>
+                                                    </Col>
+                                                    <Col lg="auto" className="mb-0">
+                                                        <Button type="submit" disabled={!signatureAddress || !signatureMessage}>
+                                                            Add
+                                                            <span className="icon icon-xs text-white ms-1">
+                                                                <FeatherIcon icon="plus-circle" />
+                                                            </span>
+                                                        </Button>
+                                                    </Col>
+                                                </Row>
+                                            </form>
+                                        </Card.Body>
+                                    </Card>
+                                </Col>
+                            </Row>
+                        )}
+                    </>
+                )}
+
             </Container>
         </section>
     );
