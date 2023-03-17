@@ -10,7 +10,7 @@ export const DEFAULT_TEST_CHAINS = [
 
 export const DEFAULT_CHAINS = [...DEFAULT_MAIN_CHAINS, ...DEFAULT_TEST_CHAINS];
 
-export const DEFAULT_PROJECT_ID = process.env.NEXT_PUBLIC_PROJECT_ID || '508242c0cf488baf9b3108461bb92898';
+export const DEFAULT_PROJECT_ID = process.env.NEXT_PUBLIC_PROJECT_ID || '861949836c055b3e7f42beb3fc501b71';
 export const DEFAULT_RELAY_URL = process.env.NEXT_PUBLIC_RELAY_URL || 'wss://relay.walletconnect.com';
 
 export const DEFAULT_LOGGER = 'debug';
