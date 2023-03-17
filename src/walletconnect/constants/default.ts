@@ -16,9 +16,9 @@ export const DEFAULT_RELAY_URL = process.env.NEXT_PUBLIC_RELAY_URL || 'wss://rel
 export const DEFAULT_LOGGER = 'debug';
 
 export const DEFAULT_APP_METADATA = {
-    name: 'Test Wallet Connect Dapp',
-    description: 'React App for WalletConnect',
-    url: 'https://walletconnect.com/',
+    name: 'Tail Database',
+    description: 'Chia Asset Token Database',
+    url: 'https://www.taildatabase.com/',
     icons: ['https://avatars.githubusercontent.com/u/37784886'],
 };
 
