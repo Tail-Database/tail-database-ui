@@ -13,6 +13,7 @@ import { Tail } from '../Tail/types';
 import { useJsonRpc } from 'walletconnect/contexts/JsonRpcContext';
 import { FormInput } from 'components/form';
 import { useWalletConnectClient } from 'walletconnect/contexts/ClientContext';
+import WalletConnect from 'components/WalletConnect';
 
 const CATEGORIES = ['gaming', 'event', 'education', 'meme', 'stablecoin', 'wrapped', 'platform'];
 
@@ -225,7 +226,16 @@ const UpdateTail = ({ tail }: { tail: Tail }) => {
     return (
         <section className="section pb-lg-7 py-4 position-relative">
             <Container>
-                {modal == 'request' && (
+                {accounts.length === 0 && (
+                    <>
+                    <h3>Not connect to wallet</h3>
+                    <p>
+                        You need to connect to your wallet using WalletConnect to continue.
+                    </p>
+                    <WalletConnect />
+                </>
+                )}
+                {accounts.length > 0 && modal == 'request' && (
                     <>
                         <h3>Pending JSON-RPC Request</h3>
                         <p>
@@ -233,7 +243,7 @@ const UpdateTail = ({ tail }: { tail: Tail }) => {
                         </p>
                     </>
                 )}
-                {modal == '' && (
+                {accounts.length > 0 && modal == '' && (
                     <>
                         {inserted && <>TAIL record submitted to mempool</>}
                         {!inserted && (
