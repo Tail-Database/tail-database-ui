@@ -27,7 +27,7 @@ const UpdateTail = ({ tail }: { tail: Tail }) => {
     const [modal, setModal] = useState('');
 
     const { accounts } = useWalletConnectClient();
-    const { chiaRpc, rpcResult, isTestnet, setIsTestnet } = useJsonRpc();
+    const { chiaRpc, rpcResult } = useJsonRpc();
 
     const hexToBytes = (hex: string): number[] => {
         for (var bytes = [], c = 0; c < hex.length; c += 2) {
@@ -228,7 +228,7 @@ const UpdateTail = ({ tail }: { tail: Tail }) => {
             <Container>
                 {accounts.length === 0 && (
                     <>
-                    <h3>Not connect to wallet</h3>
+                    <h3>Not connected to wallet</h3>
                     <p>
                         You need to connect to your wallet using WalletConnect to continue.
                     </p>
