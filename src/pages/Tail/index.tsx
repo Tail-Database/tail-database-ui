@@ -8,7 +8,6 @@ import { useEffect, useState } from 'react';
 import { Tail } from './types';
 import config from '../../config';
 
-
 export default () => {
     const { hash } = useParams();
     const [tail, setTail] = useState<Tail>({
@@ -24,8 +23,9 @@ export default () => {
     });
 
     useEffect(() => {
-        axios.get(`${config.GET_TAIL_URL}/${hash}`)
-            .then(response => setTail(response.data))
+        axios
+            .get(`${config.GET_TAIL_URL}/${hash}`)
+            .then((response) => setTail(response.data))
             .catch(console.error);
     }, []);
 

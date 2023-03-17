@@ -1,7 +1,8 @@
+import { useEffect } from 'react';
 import { Nav, Dropdown } from 'react-bootstrap';
-import { NavLink, Link, useLocation } from 'react-router-dom';
-import FeatherIcon from 'feather-icons-react';
+import { NavLink } from 'react-router-dom';
 import classNames from 'classnames';
+
 
 type MenuProps = {
     showDownload?: boolean;
@@ -10,15 +11,7 @@ type MenuProps = {
     loggedInUser?: {};
 };
 
-const Menu = ({ navClass, buttonClass, showDownload, loggedInUser }: MenuProps) => {
-    let location = useLocation();
-
-    const isActiveRoute = (path: string) => {
-        if (location.pathname) {
-            return location.pathname.includes(path);
-        }
-        return false;
-    };
+const Menu = ({ navClass }: MenuProps) => {
 
     return (
         <Nav as="ul" className={classNames('align-items-lg-center', navClass)}>
@@ -41,7 +34,11 @@ const Menu = ({ navClass, buttonClass, showDownload, loggedInUser }: MenuProps) 
             </Nav.Item>
 
             <Nav.Item as="li">
-                <a href="https://github.com/Tail-Database/tail-database-app" target="_blank" className="btn btn-primary btn-sm">
+                <a
+                    href="https://github.com/Tail-Database/tail-database-app"
+                    target="_blank"
+                    className="btn btn-primary btn-sm"
+                >
                     Download
                 </a>
             </Nav.Item>

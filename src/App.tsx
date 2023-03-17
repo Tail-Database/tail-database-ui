@@ -2,21 +2,27 @@ import { useEffect } from 'react';
 
 import AOS from 'aos';
 
-// routes
 import Routes from './routes/Routes';
 
-
-
-// Themes
-//  For Default import Theme.scss
 import './assets/scss/theme.scss';
+import { ChainDataContextProvider } from 'walletconnect/contexts/ChainDataContext';
+import { ClientContextProvider } from 'walletconnect/contexts/ClientContext';
+import { JsonRpcContextProvider } from 'walletconnect/contexts/JsonRpcContext';
 
 const App = () => {
     useEffect(() => {
         AOS.init();
     }, []);
 
-    return <Routes />;
+    return (
+        <ChainDataContextProvider>
+        <ClientContextProvider>
+          <JsonRpcContextProvider>
+            <Routes />
+          </JsonRpcContextProvider>
+        </ClientContextProvider>
+      </ChainDataContextProvider>
+    );
 };
 
 export default App;
