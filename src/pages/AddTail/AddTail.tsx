@@ -28,8 +28,29 @@ const AddTail = () => {
     const { accounts } = useWalletConnectClient();
     const { chiaRpc, rpcResult } = useJsonRpc();
 
+    useEffect(() => {
+        if (hash.length === 64) {
+            (async() => {
+                const cat_info = await axios.get(`${config.SPACESCAN_CAT_URL}/${hash}/CAT2?count=50&page=1`);
+
+                if (cat_info.data && cat_info.data.status === 'success' && cat_info.data.tokens.length > 0) {
+                    const { coin_name } = cat_info.data.tokens[cat_info.data.tokens.length - 1];
+                    const reveal = await axios.get(`${config.REVEAL_URL}/${coin_name}`);
+
+                    if (reveal.data) {
+                        const { eve_coin_id } = reveal.data;
+
+                        setCoinId(eve_coin_id);
+                    }
+                }
+            })();
+        } else {
+            setCoinId('');
+        }
+    }, [hash]);
+
     const onHashChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        if (event.target.value.length == 64) {
+        if (event.target.value.length === 64) {
             setHash(event.target.value);
         } else {
             setHash('');
@@ -318,6 +339,8 @@ const AddTail = () => {
                                                             errors={errors}
                                                             control={control}
                                                             onChange={onCoinChange}
+                                                            value={coinId}
+                                                            disabled
                                                         />
                                                     </Col>
                                                     <Col lg={12}>
