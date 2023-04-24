@@ -103,7 +103,7 @@ const AddTail = () => {
             name: yup.string().min(1).max(100).required('Please enter name'),
             code: yup.string().min(1).max(5).required('Please enter code'),
             category: yup.string().oneOf(CATEGORIES).required('Please select category'),
-            coin: yup.string().length(64).required('Please enter Coin ID'),
+            coin: yup.string().length(64).optional(),
             logo: yup.string().length(62).required('Please enter NFT ID'),
             website_url: yup.string().optional().url(),
             twitter_url: yup.string().optional().url(),
