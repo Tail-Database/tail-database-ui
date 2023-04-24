@@ -132,7 +132,10 @@ const AddTail = () => {
                     try {
                         const response = await axios.post(
                             config.ADD_TAIL_URL,
-                            formData,
+                            {
+                                ...formData,
+                                eveCoinId: coinId
+                            },
                             { headers: { 'x-chia-signature': signature } }
                         );
 
