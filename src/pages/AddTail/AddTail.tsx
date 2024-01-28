@@ -31,10 +31,10 @@ const AddTail = () => {
     useEffect(() => {
         if (hash.length === 64) {
             (async() => {
-                const cat_info = await axios.get(`${config.SPACESCAN_CAT_URL}/${hash}/CAT2?count=50&page=1`);
+                const cat_info = await axios.get(`${config.SPACESCAN_CAT_URL}/${hash}?authkey=tkn1qqqksxykg7zgp63c2ze3h3jxx683ahah6vathvcksxykg7zgqqqqy0gg6j&version=0.1.0&network=mainnet`);
 
-                if (cat_info.data && cat_info.data.status === 'success' && cat_info.data.tokens.length > 0) {
-                    const { coin_name } = cat_info.data.tokens[cat_info.data.tokens.length - 1];
+                if (cat_info.data && cat_info.data.status === 'success' && cat_info.data.data.length > 0) {
+                    const { coin_name } = cat_info.data.data[cat_info.data.tokens.length - 1];
                     const reveal = await axios.get(`${config.REVEAL_URL}/${coin_name}`);
 
                     if (reveal.data) {
@@ -59,7 +59,7 @@ const AddTail = () => {
         }
     };
     const onCoinChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        if (event.target.value.length == 64) {
+        if (event.target.value.length === 64) {
             setCoinId(event.target.value);
         } else {
             setCoinId('');
